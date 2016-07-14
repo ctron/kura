@@ -8,15 +8,40 @@
     xmlns:launching="http://www.eclipse.org/oomph/setup/launching/1.0"
     xmlns:maven="http://www.eclipse.org/oomph/setup/maven/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
-    xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
     xmlns:resources="http://www.eclipse.org/oomph/resources/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/maven/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Maven.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/resources/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Resources.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/setup/maven/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Maven.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/resources/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Resources.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
     name="iot.kura"
     label="Eclipse Kura">
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="eclipse.target.platform"
+      value="Mars"/>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="Choose developer type">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="kura.developerType"
+        storageURI="scope://Workspace"
+        label="Developer Type">
+      <choice
+          value="user"
+          label="User"/>
+      <choice
+          value="developer"
+          label="Developer"/>
+      <description>Select which type of developer for Kura you are</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Dkura.developerType="
+        value="${kura.developerType}"
+        vm="true"/>
+  </setupTask>
   <setupTask
       xsi:type="jdt:JRETask"
       version="JavaSE-1.7"
@@ -45,8 +70,12 @@
         name="org.tigris.mtoolkit.feature.group"/>
     <requirement
         name="org.eclipse.m2e.feature.feature.group"/>
+    <requirement
+        name="org.sonatype.tycho.m2e.feature.feature.group"/>
     <repository
         url="http://mtoolkit.tigris.org/updates/stable"/>
+    <repository
+        url="http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.8.0/N/0.8.0.201409231215/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -71,56 +100,6 @@
     <description>${scope.project.label}</description>
   </setupTask>
   <setupTask
-      xsi:type="setup.targlets:TargletTask"
-      disabled="true">
-    <targlet
-        name="${scope.project.label}"
-        activeRepositoryList="${eclipse.target.platform}">
-      <requirement
-          name="org.eclipse.eclipse.kura.user.feature.group"/>
-      <requirement
-          name="org.eclipse.sdk.feature.group"/>
-      <sourceLocator
-          rootFolder="${git.clone.location}"
-          locateNestedProjects="true"/>
-      <repositoryList
-          name="Neon">
-        <repository
-            url="http://download.eclipse.org/releases/neon"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-      <repositoryList
-          name="Mars">
-        <repository
-            url="http://download.eclipse.org/releases/mars"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-      <repositoryList
-          name="Luna">
-        <repository
-            url="http://download.eclipse.org/releases/luna"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-      <repositoryList
-          name="Kepler">
-        <repository
-            url="http://download.eclipse.org/releases/kepler"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-      <repositoryList
-          name="Juno">
-        <repository
-            url="http://download.eclipse.org/releases/juno"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-    </targlet>
-  </setupTask>
-  <setupTask
       xsi:type="setup:CompoundTask"
       name="Dependencies">
     <setupTask
@@ -143,76 +122,6 @@
       <setupTask
           xsi:type="launching:LaunchTask"
           launcher="target-platform/target-platform.launch"/>
-    </setupTask>
-  </setupTask>
-  <setupTask
-      xsi:type="setup:CompoundTask"
-      name="Project Creation">
-    <setupTask
-        xsi:type="setup:CompoundTask"
-        name="org.eclipse.kura.api">
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="eclipse.preferences.version=1&#xA;org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled&#xA;org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6&#xA;org.eclipse.jdt.core.compiler.compliance=1.6&#xA;org.eclipse.jdt.core.compiler.problem.assertIdentifier=error&#xA;org.eclipse.jdt.core.compiler.problem.enumIdentifier=error&#xA;org.eclipse.jdt.core.compiler.source=1.6&#xA;"
-          targetURL="file://${git.clone.location}/kura/org.eclipse.kura.api/.settings/org.eclipse.jdt.core.prefs"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;classpath>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.pde.core.requiredPlugins&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/java&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/resources&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;output&quot; path=&quot;target/classes&quot;/>&#xA;&lt;/classpath>&#xA;"
-          targetURL="file://${git.clone.location}/kura/org.eclipse.kura.api/.classpath"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;projectDescription>&#xA;&#x9;&lt;name>org.eclipse.kura.api&lt;/name>&#xA;&#x9;&lt;comment>&lt;/comment>&#xA;&#x9;&lt;projects>&#xA;&#x9;&lt;/projects>&#xA;&#x9;&lt;buildSpec>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.jdt.core.javabuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.ManifestBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.SchemaBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&lt;/buildSpec>&#xA;&#x9;&lt;natures>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.pde.PluginNature&lt;/nature>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.jdt.core.javanature&lt;/nature>&#xA;&#x9;&lt;/natures>&#xA;&lt;/projectDescription>&#xA;"
-          targetURL="file://${git.clone.location}/kura/org.eclipse.kura.api/.project"
-          encoding="UTF-8"/>
-    </setupTask>
-    <setupTask
-        xsi:type="setup:CompoundTask"
-        name="org.eclipse.kura.emulator">
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="eclipse.preferences.version=1&#xA;org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled&#xA;org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6&#xA;org.eclipse.jdt.core.compiler.compliance=1.6&#xA;org.eclipse.jdt.core.compiler.problem.assertIdentifier=error&#xA;org.eclipse.jdt.core.compiler.problem.enumIdentifier=error&#xA;org.eclipse.jdt.core.compiler.source=1.6&#xA;"
-          targetURL="file://${git.clone.location}/kura/emulator/org.eclipse.kura.emulator/.settings/org.eclipse.jdt.core.prefs"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;classpath>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.pde.core.requiredPlugins&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/java&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/resources&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;output&quot; path=&quot;target/classes&quot;/>&#xA;&lt;/classpath>&#xA;"
-          targetURL="file://${git.clone.location}/kura/emulator/org.eclipse.kura.emulator/.classpath"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;projectDescription>&#xA;&#x9;&lt;name>org.eclipse.kura.emulator&lt;/name>&#xA;&#x9;&lt;comment>&lt;/comment>&#xA;&#x9;&lt;projects>&#xA;&#x9;&lt;/projects>&#xA;&#x9;&lt;buildSpec>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.jdt.core.javabuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.ManifestBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.SchemaBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&lt;/buildSpec>&#xA;&#x9;&lt;natures>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.pde.PluginNature&lt;/nature>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.jdt.core.javanature&lt;/nature>&#xA;&#x9;&lt;/natures>&#xA;&lt;/projectDescription>&#xA;"
-          targetURL="file://${git.clone.location}/kura/emulator/org.eclipse.kura.emulator/.project"
-          encoding="UTF-8"/>
-    </setupTask>
-    <setupTask
-        xsi:type="setup:CompoundTask"
-        name="org.eclipse.kura.demo.heater">
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="eclipse.preferences.version=1&#xA;org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled&#xA;org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6&#xA;org.eclipse.jdt.core.compiler.compliance=1.6&#xA;org.eclipse.jdt.core.compiler.problem.assertIdentifier=error&#xA;org.eclipse.jdt.core.compiler.problem.enumIdentifier=error&#xA;org.eclipse.jdt.core.compiler.source=1.6&#xA;"
-          targetURL="file://${git.clone.location}/kura/examples/org.eclipse.kura.demo.heater/.settings/org.eclipse.jdt.core.prefs"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;classpath>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.pde.core.requiredPlugins&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/java&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;src&quot; path=&quot;src/main/resources&quot;/>&#xA;&#x9;&lt;classpathentry kind=&quot;output&quot; path=&quot;target/classes&quot;/>&#xA;&lt;/classpath>&#xA;"
-          targetURL="file://${git.clone.location}/kura/examples/org.eclipse.kura.demo.heater/.classpath"
-          encoding="UTF-8"/>
-      <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;projectDescription>&#xA;&#x9;&lt;name>org.eclipse.kura.demo.heater&lt;/name>&#xA;&#x9;&lt;comment>&lt;/comment>&#xA;&#x9;&lt;projects>&#xA;&#x9;&lt;/projects>&#xA;&#x9;&lt;buildSpec>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.jdt.core.javabuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.ManifestBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&#x9;&lt;buildCommand>&#xA;&#x9;&#x9;&#x9;&lt;name>org.eclipse.pde.SchemaBuilder&lt;/name>&#xA;&#x9;&#x9;&#x9;&lt;arguments>&#xA;&#x9;&#x9;&#x9;&lt;/arguments>&#xA;&#x9;&#x9;&lt;/buildCommand>&#xA;&#x9;&lt;/buildSpec>&#xA;&#x9;&lt;natures>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.pde.PluginNature&lt;/nature>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.jdt.core.javanature&lt;/nature>&#xA;&#x9;&lt;/natures>&#xA;&lt;/projectDescription>&#xA;"
-          targetURL="file://${git.clone.location}/kura/examples/org.eclipse.kura.demo.heater/.project"
-          encoding="UTF-8"/>
     </setupTask>
   </setupTask>
   <setupTask
@@ -259,19 +168,6 @@
     <description>Kura</description>
   </setupTask>
   <setupTask
-      xsi:type="projects:ProjectsImportTask">
-    <sourceLocator
-        rootFolder="${git.clone.location}/kura/org.eclipse.kura.api"/>
-    <sourceLocator
-        rootFolder="${git.clone.location}/kura/emulator/org.eclipse.kura.emulator"/>
-    <sourceLocator
-        rootFolder="${git.clone.location}/kura/examples/org.eclipse.kura.demo.heater"/>
-  </setupTask>
-  <setupTask
-      xsi:type="setup:VariableTask"
-      name="eclipse.target.platform"
-      value="Mars"/>
-  <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
     <workingSet
         name="${scope.project.label}">
@@ -283,6 +179,35 @@
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="Developer Type">
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        filter="(kura.developerType=user)"
+        name="User">
+      <setupTask
+          xsi:type="maven:MavenImportTask">
+        <sourceLocator
+            rootFolder="${git.clone.location}/kura/org.eclipse.kura.api"/>
+        <sourceLocator
+            rootFolder="${git.clone.location}/kura/emulator/org.eclipse.kura.emulator"/>
+        <sourceLocator
+            rootFolder="${git.clone.location}/kura/examples/org.eclipse.kura.demo.heater"/>
+      </setupTask>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        filter="(kura.developerType=developer)"
+        name="Developer">
+      <setupTask
+          xsi:type="maven:MavenImportTask">
+        <sourceLocator
+            rootFolder="${git.clone.location}/kura"
+            locateNestedProjects="true"/>
+      </setupTask>
+    </setupTask>
   </setupTask>
   <stream name="develop"
       label="Development"/>
