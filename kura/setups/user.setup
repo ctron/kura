@@ -72,6 +72,8 @@
         name="org.eclipse.m2e.feature.feature.group"/>
     <requirement
         name="org.sonatype.tycho.m2e.feature.feature.group"/>
+    <requirement
+        name="org.eclipse.m2e.wtp.feature.feature.group"/>
     <repository
         url="http://mtoolkit.tigris.org/updates/stable"/>
     <repository
