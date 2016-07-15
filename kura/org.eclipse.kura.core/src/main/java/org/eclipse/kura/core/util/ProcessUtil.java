@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kura.core.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
@@ -40,6 +41,12 @@ public class ProcessUtil
 	});
     
 	public static SafeProcess exec(String command)
+			throws IOException
+	{
+		return exec(null, command);
+	}
+	
+	public static SafeProcess exec(File directory, String command)
 		throws IOException
 	{
 		// Use StringTokenizer since this is the method documented by Runtime
@@ -51,10 +58,16 @@ public class ProcessUtil
 			cmdArray[i] = st.nextToken();
 		}
 		
-		return exec(cmdArray);
+		return exec(directory, cmdArray);
 	}
 
 	public static SafeProcess exec(final String[] cmdarray)
+			throws IOException
+	{
+		return exec ( null, cmdarray );
+	}
+	
+	public static SafeProcess exec(final File directory, final String[] cmdarray)
 		throws IOException
 	{		
 		// Serialize process executions. One at a time so we can consume all streams.
@@ -62,7 +75,7 @@ public class ProcessUtil
             @Override
             public SafeProcess call() throws Exception {
                 SafeProcess safeProcess = new SafeProcess();
-                safeProcess.exec(cmdarray);
+                safeProcess.exec(directory, cmdarray);
                 return safeProcess;
             }
         });
