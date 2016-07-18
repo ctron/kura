@@ -8,11 +8,13 @@
  *
  * Contributors:
  *     Eurotech
+ *     Jens Reimann <jreimann@redhat.com> - Fix reloading issue of XML routes
  *******************************************************************************/
 package org.eclipse.kura.camel.router;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -42,6 +44,7 @@ import org.apache.camel.component.vm.VmComponent;
 import org.apache.camel.component.xslt.XsltComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.component.kura.KuraRouter;
@@ -101,6 +104,10 @@ public abstract class CamelRouter extends KuraRouter implements ConfigurableComp
 				!newCamelRouteXml.equals(oldCamelRouteXml)) {
 			this.m_camelRouteXml = newCamelRouteXml;
 			try {
+				// clear first
+				camelContext.removeRouteDefinitions(new ArrayList<RouteDefinition> (camelContext.getRouteDefinitions()));
+				
+				// now add
 				ByteArrayInputStream bais =  new ByteArrayInputStream(m_camelRouteXml.getBytes());
 				RoutesDefinition routesDefinition = camelContext.loadRoutesDefinition(bais);
 				camelContext.addRouteDefinitions(routesDefinition.getRoutes());
