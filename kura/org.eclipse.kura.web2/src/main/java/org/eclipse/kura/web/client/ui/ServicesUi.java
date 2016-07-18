@@ -54,7 +54,9 @@ import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.ModalHeader;
 import org.gwtbootstrap3.client.ui.NavPills;
 import org.gwtbootstrap3.client.ui.PanelBody;
+import org.gwtbootstrap3.client.ui.TextArea;
 import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.base.TextBoxBase;
 import org.gwtbootstrap3.client.ui.constants.InputType;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
@@ -78,9 +80,9 @@ public class ServicesUi extends Composite {
 
 	private static final String CONFIG_MAX_VALUE = "configMaxValue";
 	private static final String CONFIG_MIN_VALUE = "configMinValue";
-	private static ServicesUiUiBinder uiBinder = GWT.create(ServicesUiUiBinder.class);
+	private static final ServicesUiUiBinder uiBinder = GWT.create(ServicesUiUiBinder.class);
 	private static final Logger logger = Logger.getLogger(ServicesUi.class.getSimpleName());
-	private static Logger errorLogger = Logger.getLogger("ErrorLogger");
+	private static final Logger errorLogger = Logger.getLogger("ErrorLogger");
 
 	interface ServicesUiUiBinder extends UiBinder<Widget, ServicesUi> {
 	}
@@ -251,7 +253,15 @@ public class ServicesUi extends Composite {
 					@Override
 					public void onClick(ClickEvent event) {
 						EntryClassUi.showWaitModal();
-						getUpdatedConfiguration();
+						try{
+							getUpdatedConfiguration();
+						}
+						catch (Exception ex)
+						{
+							EntryClassUi.hideWaitModal();
+							FailureHandler.handle(ex);
+							return;
+						}
 						gwtXSRFService.generateSecurityToken(new AsyncCallback<GwtXSRFToken> () {
 
 							@Override
@@ -266,7 +276,8 @@ public class ServicesUi extends Composite {
 									@Override
 									public void onFailure(Throwable caught) {
 										EntryClassUi.hideWaitModal();
-										errorLogger.log(Level.SEVERE, caught.getLocalizedMessage());
+										FailureHandler.handle(caught);
+										errorLogger.log(Level.SEVERE, caught.getLocalizedMessage() != null ? caught.getLocalizedMessage() : caught.getClass().getName(), caught);
 									}
 
 									@Override
@@ -324,13 +335,20 @@ public class ServicesUi extends Composite {
 		List<String> multiFieldValues = new ArrayList<String>();
 		int fgwCount = fg.getWidgetCount();
 		for (int i = 0; i < fgwCount; i++) {
+			logger.fine("Widget: " + fg.getClass() );
+			
 			if (fg.getWidget(i) instanceof FormLabel) {
-				String id = ((FormLabel) fg.getWidget(i)).getText();
-				param = m_configurableComponent.getParameter(id.trim().replaceAll("\\*$", ""));
-			} else if (fg.getWidget(i) instanceof ListBox || 
-					fg.getWidget(i) instanceof Input ||
-					fg.getWidget(i) instanceof TextBox) {
+				param = m_configurableComponent.getParameter(fg.getWidget(i).getTitle());
+				logger.fine("Param: " + fg.getTitle() + " -> " + param );
+				
+			} else if ( fg.getWidget(i) instanceof ListBox || 
+						fg.getWidget(i) instanceof Input ||
+						fg.getWidget(i) instanceof TextBoxBase ) {
 
+				if (param == null) {
+					System.out.println("Missing parameter");
+					continue;
+				}
 				String value = getUpdatedFieldConfiguration(param, fg.getWidget(i));
 				if (value == null) {
 					continue;
@@ -371,7 +389,7 @@ public class ServicesUi extends Composite {
 			case INTEGER:
 			case CHAR:
 			case STRING:
-				TextBox tb = (TextBox) wg;
+				TextBoxBase tb = (TextBoxBase) wg;
 				String value = tb.getText();
 				if (value != null) {
 					return value;
@@ -430,7 +448,7 @@ public class ServicesUi extends Composite {
 	// Field Render based on Type
 	private void renderTextField(final GwtConfigParameter param, boolean isFirstInstance, FormGroup formGroup) {
 
-		valid.put(param.getName(), true);
+		valid.put(param.getId(), true);
 
 		if (isFirstInstance) {
 			FormLabel formLabel = new FormLabel();
@@ -439,6 +457,7 @@ public class ServicesUi extends Composite {
 			} else {
 				formLabel.setText(param.getName());
 			}
+			formLabel.setTitle(param.getId());
 			formGroup.add(formLabel);
 
 			HelpBlock tooltip = new HelpBlock();
@@ -446,7 +465,7 @@ public class ServicesUi extends Composite {
 			formGroup.add(tooltip);
 		}
 
-		TextBox textBox = new TextBox();
+		TextBoxBase textBox = createTextBox(param);
 		if (param.getDescription().contains("\u200B\u200B\u200B\u200B\u200B")) {
 			textBox.setHeight("120px");
 		}
@@ -505,7 +524,7 @@ public class ServicesUi extends Composite {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				setDirty(true);
-				TextBox box = (TextBox) event.getSource();
+				TextBoxBase box = (TextBoxBase) event.getSource();
 				FormGroup group = (FormGroup) box.getParent();
 				validate(param,box,group);
 			}
@@ -515,8 +534,27 @@ public class ServicesUi extends Composite {
 
 	}
 
+	private TextBoxBase createTextBox(GwtConfigParameter param) {
+		if (param.getDescription().contains("\u200B\u200B\u200B\u200B\u200B")) {
+			return createTextArea ();
+		}
+		if (param.getType() == GwtConfigParameterType.STRING ) {
+			if ( param.getCardinality() == -1 ) {
+				return createTextArea();
+			}
+		}
+		return new TextBox();
+	}
+
+	private TextArea createTextArea() {
+		TextArea textArea = new TextArea();
+		textArea.setVisibleLines(10);
+		textArea.setCharacterWidth(120);
+		return textArea;		
+	}
+
 	private void renderPasswordField(final GwtConfigParameter param, boolean isFirstInstance, FormGroup formGroup) {
-		valid.put(param.getName(), true);
+		valid.put(param.getId(), true);
 
 		if (isFirstInstance) {
 			FormLabel formLabel = new FormLabel();
@@ -559,12 +597,12 @@ public class ServicesUi extends Composite {
 					// null in required field
 					group.setValidationState(ValidationState.ERROR);
 					box.setPlaceholder("Field is required");
-					valid.put(param.getName(), false);
+					valid.put(param.getId(), false);
 				} else {
 					group.setValidationState(ValidationState.NONE);
 					box.setPlaceholder("");
 					param.setValue(box.getText());
-					valid.put(param.getName(), true);
+					valid.put(param.getId(), true);
 				}
 			}
 		});
@@ -576,7 +614,7 @@ public class ServicesUi extends Composite {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void renderBooleanField(final GwtConfigParameter param, boolean isFirstInstance, FormGroup formGroup) {
-		valid.put(param.getName(), true);
+		valid.put(param.getId(), true);
 
 		if (isFirstInstance) {
 			FormLabel formLabel = new FormLabel();
@@ -642,7 +680,7 @@ public class ServicesUi extends Composite {
 	}
 
 	private void renderChoiceField(final GwtConfigParameter param, boolean isFirstInstance, FormGroup formGroup) {
-		valid.put(param.getName(), true);
+		valid.put(param.getId(), true);
 
 		if (isFirstInstance) {
 			FormLabel formLabel = new FormLabel();
@@ -713,24 +751,24 @@ public class ServicesUi extends Composite {
 	}
 
 	//Validates all the entered values
-	private boolean validate(GwtConfigParameter param, TextBox box, FormGroup group){  //TODO: validation should be done like in the old web ui: cleaner approach
+	private boolean validate(GwtConfigParameter param, TextBoxBase box, FormGroup group){  //TODO: validation should be done like in the old web ui: cleaner approach
 		if(param.isRequired() && (box.getText().trim() == null || "".equals(box.getText().trim()))) {
 			group.setValidationState(ValidationState.ERROR);
-			valid.put(param.getName(), false);
+			valid.put(param.getId(), false);
 			box.setPlaceholder(MSGS.formRequiredParameter());
 			return false;
 		} else if (box.getText().trim() != null && !"".equals(box.getText().trim())){
 			if (param.getType().equals(GwtConfigParameterType.CHAR)) {
 				if (box.getText().trim().length() > 1) {
 					group.setValidationState(ValidationState.ERROR);
-					valid.put(param.getName(), false);
+					valid.put(param.getId(), false);
 					box.setPlaceholder(MessageUtils.get(Integer.toString(box.getText().trim().length()), box.getText()));
 					return false;
 				}
 				if (param.getMin() != null) {
 					if(Character.valueOf(param.getMin().charAt(0)).charValue() > Character.valueOf(box.getText().trim().charAt(0)).charValue()){  //TODO: why this character boxing?
 						group.setValidationState(ValidationState.ERROR);
-						valid.put(param.getName(), false);
+						valid.put(param.getId(), false);
 						box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, Character.valueOf(param.getMin().charAt(0)).charValue()));
 						return false;
 					}
@@ -738,24 +776,24 @@ public class ServicesUi extends Composite {
 				if (param.getMax()!=null) {
 					if(Character.valueOf(param.getMax().charAt(0)).charValue() < Character.valueOf(box.getText().trim().charAt(0)).charValue()){
 						group.setValidationState(ValidationState.ERROR);
-						valid.put(param.getName(), false);
+						valid.put(param.getId(), false);
 						box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, Character.valueOf(param.getMax().charAt(0)).charValue()));
 						return false;
 					}
 				}
 			} else if (param.getType().equals(GwtConfigParameterType.STRING)) {
-				int configMinValue= Integer.parseInt(param.getMin());
-				int configMaxValue= Integer.parseInt(param.getMax());
+				int configMinValue= param.getMin() != null ? Integer.parseInt(param.getMin()) : 0;
+				int configMaxValue= param.getMax() != null ? Integer.parseInt(param.getMax()) : Integer.MAX_VALUE;
 				if ((String.valueOf(box.getText().trim()).length()) < Math.max(configMinValue, 0)) {
 					group.setValidationState(ValidationState.ERROR);
-					valid.put(param.getName(), false);
+					valid.put(param.getId(), false);
 					box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, Math.max(configMinValue, 0)));
 					return false;
 				}				
-				if ((String.valueOf(box.getText().trim()).length()) > Math.min(configMaxValue, 255)) {
+				if ((String.valueOf(box.getText().trim()).length()) > Math.min(configMaxValue, Integer.MAX_VALUE)) {
 					group.setValidationState(ValidationState.ERROR);
-					valid.put(param.getName(), false);
-					box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, Math.min(configMaxValue, 255)));
+					valid.put(param.getId(), false);
+					box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, Math.min(configMaxValue, Integer.MAX_VALUE)));
 					return false;
 				}	
 			} else {
@@ -765,7 +803,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Float.valueOf(param.getMin()).floatValue() > Float.valueOf(box.getText().trim()).floatValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -773,7 +811,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax()!=null) {
 							if (Float.valueOf(param.getMax()).floatValue() < Float.valueOf(box.getText().trim()).floatValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -782,7 +820,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Integer.valueOf(param.getMin()).intValue() > Integer.valueOf(box.getText().trim()).intValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -790,7 +828,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax() != null) {
 							if (Integer.valueOf(param.getMax()).intValue() < Integer.valueOf(box.getText().trim()).intValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -799,7 +837,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Short.valueOf(param.getMin()).shortValue() > Short.valueOf(box.getText().trim()).shortValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -807,7 +845,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax() != null) {
 							if (Short.valueOf(param.getMax()).shortValue() < Short.valueOf(box.getText().trim()).shortValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -816,7 +854,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Byte.valueOf(param.getMin()).byteValue() > Byte.valueOf(box.getText().trim()).byteValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -824,7 +862,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax() != null) {
 							if (Byte.valueOf(param.getMax()).byteValue() < Byte.valueOf(box.getText().trim()).byteValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -833,7 +871,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Long.valueOf(param.getMin()).longValue() > Long.valueOf(box.getText().trim()).longValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -841,7 +879,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax() != null) {
 							if (Long.valueOf(param.getMax()).longValue() < Long.valueOf(box.getText().trim()).longValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -850,7 +888,7 @@ public class ServicesUi extends Composite {
 						if (param.getMin() != null) {
 							if (Double.valueOf(param.getMin()).doubleValue() > Double.valueOf(box.getText().trim()).doubleValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MIN_VALUE, param.getMin()));
 								return false;
 							}
@@ -858,7 +896,7 @@ public class ServicesUi extends Composite {
 						if (param.getMax() != null) {
 							if (Double.valueOf(param.getMax()).doubleValue() < Double.valueOf(box.getText().trim()).doubleValue()) {
 								group.setValidationState(ValidationState.ERROR);
-								valid.put(param.getName(), false);
+								valid.put(param.getId(), false);
 								box.setPlaceholder(MessageUtils.get(CONFIG_MAX_VALUE, param.getMax()));
 								return false;
 							}
@@ -866,14 +904,14 @@ public class ServicesUi extends Composite {
 					}
 				} catch(NumberFormatException e) {
 					group.setValidationState(ValidationState.ERROR);
-					valid.put(param.getName(), false);
+					valid.put(param.getId(), false);
 					box.setPlaceholder(e.getLocalizedMessage());
 					return false;
 				}
 			}
 		}	
 		group.setValidationState(ValidationState.NONE);
-		valid.put(param.getName(), true);
+		valid.put(param.getId(), true);
 		return true;
 	}
 
