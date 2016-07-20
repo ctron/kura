@@ -15,7 +15,7 @@ JAVA_OPTS="$JAVA_OPTS -Dkura.arch=armv7_hf"
 JAVA_OPTS="$JAVA_OPTS -Dkura.os.version=fedora"
 JAVA_OPTS="$JAVA_OPTS -Dkura.data.dir=/var/lib/kura/data"
 JAVA_OPTS="$JAVA_OPTS -Dkura.configuration=file:/etc/kura/kura.properties"
-JAVA_OPTS="$JAVA_OPTS -Dkura.custom.configuration=file:/etc/kura/kura-custom.properties"
+JAVA_OPTS="$JAVA_OPTS -Dkura.custom.configuration=file:/etc/kura/kura_custom.properties"
 
 JAVA_OPTS="$JAVA_OPTS -Djava.security.policy=/etc/kura/jdk.dio.policy"
 JAVA_OPTS="$JAVA_OPTS -Djdk.dio.registry=/etc/kura/jdk.dio.properties"
