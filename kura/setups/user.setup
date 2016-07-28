@@ -111,12 +111,6 @@
         xsi:type="setup:CompoundTask"
         name="target-platform">
       <setupTask
-          xsi:type="setup:ResourceCreationTask"
-          excludedTriggers="BOOTSTRAP"
-          content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?>&#xA;&lt;launchConfiguration type=&quot;org.eclipse.m2e.Maven2LaunchConfigurationType&quot;>&#xA;&lt;booleanAttribute key=&quot;M2_DEBUG_OUTPUT&quot; value=&quot;false&quot;/>&#xA;&lt;stringAttribute key=&quot;M2_GOALS&quot; value=&quot;clean package&quot;/>&#xA;&lt;booleanAttribute key=&quot;M2_NON_RECURSIVE&quot; value=&quot;false&quot;/>&#xA;&lt;booleanAttribute key=&quot;M2_OFFLINE&quot; value=&quot;false&quot;/>&#xA;&lt;stringAttribute key=&quot;M2_PROFILES&quot; value=&quot;&quot;/>&#xA;&lt;listAttribute key=&quot;M2_PROPERTIES&quot;/>&#xA;&lt;stringAttribute key=&quot;M2_RUNTIME&quot; value=&quot;EMBEDDED&quot;/>&#xA;&lt;booleanAttribute key=&quot;M2_SKIP_TESTS&quot; value=&quot;false&quot;/>&#xA;&lt;intAttribute key=&quot;M2_THREADS&quot; value=&quot;1&quot;/>&#xA;&lt;booleanAttribute key=&quot;M2_UPDATE_SNAPSHOTS&quot; value=&quot;false&quot;/>&#xA;&lt;stringAttribute key=&quot;M2_USER_SETTINGS&quot; value=&quot;&quot;/>&#xA;&lt;booleanAttribute key=&quot;M2_WORKSPACE_RESOLUTION&quot; value=&quot;false&quot;/>&#xA;&lt;stringAttribute key=&quot;org.eclipse.debug.core.ATTR_REFRESH_SCOPE&quot; value=&quot;$${project}&quot;/>&#xA;&lt;stringAttribute key=&quot;org.eclipse.jdt.launching.WORKING_DIRECTORY&quot; value=&quot;$${project_loc:target-platform}&quot;/>&#xA;&lt;/launchConfiguration>&#xA;"
-          targetURL="file://${git.clone.location}/target-platform/target-platform.launch"
-          encoding="UTF-8"/>
-      <setupTask
           xsi:type="maven:MavenImportTask">
         <sourceLocator
             rootFolder="${git.clone.location}/target-platform">
@@ -132,7 +126,7 @@
       </setupTask>
       <setupTask
           xsi:type="launching:LaunchTask"
-          launcher="target-platform/target-platform.launch"/>
+          launcher="setups/launchers/target-platform.launch"/>
     </setupTask>
   </setupTask>
   <setupTask
@@ -142,25 +136,6 @@
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}"
         includeAllPlatforms="true">
-      <annotation
-          source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
-        <detail
-            key="location">
-          <value>${git.clone.location/target-platform/kura.target}</value>
-        </detail>
-        <detail
-            key="singleLocation">
-          <value>true</value>
-        </detail>
-        <detail
-            key="includeAllPlatforms">
-          <value>false</value>
-        </detail>
-        <detail
-            key="includeSource">
-          <value>true</value>
-        </detail>
-      </annotation>
       <requirement
           name="*"/>
       <requirement
@@ -232,6 +207,11 @@
                 pattern="org.eclipse.kura.web"/>
           </predicate>
         </sourceLocator>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          launcher="setups/launchers/build-full.launch">
+        <description>Build Kura Core</description>
       </setupTask>
       <setupTask
           xsi:type="launching:LaunchTask"
