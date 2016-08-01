@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (c) 2011, 2014 Eurotech and/or its affiliates
+    Copyright (c) 2011, 2016 Eurotech and/or its affiliates
 
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
 
     Contributors:
       Eurotech
+      Jens Reimann - <jreimann@redhat.com> - use CDATA for scripts
 
 -->
 <project name="build_equinox_distrib" default="dist-linux" basedir="../../../">
@@ -60,7 +61,7 @@
         </propertyfile>
 
 	<!-- Create the Kura start scripts -->
-	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura.sh" append="false">#!/bin/sh
+	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura.sh" append="false"><![CDATA[#!/bin/sh
 
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/opt/jvm/bin:/usr/java/bin:$PATH
 export MALLOC_ARENA_MAX=1
@@ -86,8 +87,8 @@ if [ -z "$KURA_RUNNING" ] ; then
         -console \
         -consoleLog
 fi
-	</echo>    
-	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura_debug.sh" append="false">#!/bin/sh
+]]></echo>    
+	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura_debug.sh" append="false"><![CDATA[#!/bin/sh
 
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/opt/jvm/bin:/usr/java/bin:$PATH
 export MALLOC_ARENA_MAX=1
@@ -116,8 +117,8 @@ if [ -z "$KURA_RUNNING" ] ; then
         -console \
         -consoleLog
 fi
-	</echo>    
-	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura_background.sh" append="false"># Kura should be installed to the /opt/eclipse directory.
+]]></echo>    
+	<echo file="${project.build.directory}/kura-${build.name}_${project.version}/start_kura_background.sh" append="false"><![CDATA[# Kura should be installed to the /opt/eclipse directory.
 
 #!/bin/sh
 
@@ -143,7 +144,7 @@ if [ -z "$KURA_RUNNING" ] ; then
         -jar plugins/org.eclipse.osgi_3.8.1.v20120830-144521.jar \
         -configuration configuration/ \
         -console 5002 \
-        -consoleLog >> /var/log/kura-console.log 2>> /var/log/kura-console.log &amp;
+        -consoleLog >> /var/log/kura-console.log 2>> /var/log/kura-console.log &
 
     #Save the PID
     KURA_PID=$!
@@ -152,8 +153,7 @@ if [ -z "$KURA_RUNNING" ] ; then
 else
     echo "Failed to start Kura. It is already running ..." >> /var/log/kura-console.log
 fi
-
-	</echo>
+]]></echo>
         
         <zip destfile="${project.build.directory}/kura-${build.name}-test_${project.version}.zip">
     
