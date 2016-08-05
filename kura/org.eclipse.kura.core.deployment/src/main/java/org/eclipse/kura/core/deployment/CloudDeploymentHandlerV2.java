@@ -8,18 +8,15 @@
  *
  * Contributors:
  *     Eurotech
+ *     Jens Reimann <jreimann@redhat.com> - Refactor configuration handling
  *******************************************************************************/
 
 package org.eclipse.kura.core.deployment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -44,10 +41,12 @@ import org.eclipse.kura.core.deployment.xml.XmlDeploymentPackages;
 import org.eclipse.kura.core.deployment.xml.XmlUtil;
 import org.eclipse.kura.core.util.ThrowableUtil;
 import org.eclipse.kura.data.DataTransportService;
+import org.eclipse.kura.deployment.base.DeploymentLocation;
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraRequestPayload;
 import org.eclipse.kura.message.KuraResponsePayload;
 import org.eclipse.kura.ssl.SslManagerService;
+import org.eclipse.kura.system.SystemConfigurationService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -65,14 +64,10 @@ public class CloudDeploymentHandlerV2 extends Cloudlet {
 	public static final String APP_ID = "DEPLOY-V2";
 
 	private static final String DPA_CONF_PATH_PROPNAME = "dpa.configuration";
-	private static final String KURA_CONF_URL_PROPNAME = "kura.configuration";
 	private static final String PACKAGES_PATH_PROPNAME = "kura.packages";
-	private static final String KURA_DATA_DIR = "kura.data";
-
 
 	public static final String  RESOURCE_PACKAGES = "packages";
 	public static final String  RESOURCE_BUNDLES  = "bundles";
-
 
 	/* EXEC */
 	public static final String RESOURCE_DOWNLOAD = "download";
@@ -166,6 +161,9 @@ public class CloudDeploymentHandlerV2 extends Cloudlet {
 	private String m_pendingUninstPackageName;
 	private String m_installVerificationDir;
 
+	private SystemConfigurationService systemConfigurationService;
+	
+	private DeploymentLocation deploymentLocation;
 
 	public CloudDeploymentHandlerV2() {
 		super(APP_ID);
@@ -200,7 +198,14 @@ public class CloudDeploymentHandlerV2 extends Cloudlet {
 	public void unsetDataTransportService(DataTransportService dataTransportService) {
 		m_dataTransportService = null;
 	}
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
+	public void setDeploymentLocation(DeploymentLocation deploymentLocation) {
+		this.deploymentLocation = deploymentLocation;
+	}
 
 	// ----------------------------------------------------------------
 	//
@@ -219,41 +224,14 @@ public class CloudDeploymentHandlerV2 extends Cloudlet {
 		if (m_dpaConfPath == null || m_dpaConfPath.isEmpty()) {
 			throw new ComponentException("The value of '" + DPA_CONF_PATH_PROPNAME + "' is not defined");
 		}
-
-		String sKuraConfUrl = System.getProperty(KURA_CONF_URL_PROPNAME);
-		if (sKuraConfUrl == null || sKuraConfUrl.isEmpty()) {
-			throw new ComponentException("The value of '" + KURA_CONF_URL_PROPNAME + "' is not defined");
-		}
-
-		URL kuraUrl = null;
-		try {
-			kuraUrl = new URL(sKuraConfUrl);
-		} catch (MalformedURLException e) {
-			throw new ComponentException("Invalid Kura configuration URL");
-		}
-
-		Properties kuraProperties = new Properties();
-		try {
-			kuraProperties.load(kuraUrl.openStream());
-		} catch (FileNotFoundException e) {
-			throw new ComponentException("Kura configuration file not found", e);
-		} catch (IOException e) {
-			throw new ComponentException("Exception loading Kura configuration file", e);
-		}
-
-		m_packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);
-		if (m_packagesPath == null || m_packagesPath.isEmpty()) {
+		
+		final File packagesPath = this.deploymentLocation.getPackagesLocation();
+		if (packagesPath == null ) {
 			throw new ComponentException("The value of '" + PACKAGES_PATH_PROPNAME + "' is not defined");
 		}
-		if (    kuraProperties.getProperty(PACKAGES_PATH_PROPNAME) != null && 
-				"kura/packages".equals(kuraProperties.getProperty(PACKAGES_PATH_PROPNAME).trim())
-				) {
-			kuraProperties.setProperty(PACKAGES_PATH_PROPNAME, "/opt/eclipse/kura/kura/packages");
-			m_packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);
-			s_logger.warn("Overridding invalid kura.packages location");
-		}
+		this.m_packagesPath = packagesPath.getAbsolutePath();
 
-		String kuraDataDir= kuraProperties.getProperty(KURA_DATA_DIR);
+		final String kuraDataDir= this.systemConfigurationService.getDataLocation(null).getAbsolutePath();
 
 		s_installImplementation = new InstallImpl(this, kuraDataDir);
 		s_installImplementation.setPackagesPath(m_packagesPath);

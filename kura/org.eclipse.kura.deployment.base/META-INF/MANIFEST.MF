@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Deployment Base
+Bundle-SymbolicName: org.eclipse.kura.deployment.base
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse Kura
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.kura.deployment.base;version="1.0.0"

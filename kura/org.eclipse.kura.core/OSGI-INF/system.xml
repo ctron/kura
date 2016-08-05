@@ -24,4 +24,5 @@
               unbind="unsetNetworkService"
               cardinality="1..1" 
               policy="static"/>
+   <reference bind="setSystemConfigurationService" cardinality="1..1" interface="org.eclipse.kura.system.SystemConfigurationService" name="SystemConfigurationService" policy="static"/>
 </scr:component>

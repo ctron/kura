@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Eurotech
+ *     Jens Reimann <jreimann@redhat.com> - Refactor system properties and paths
  *******************************************************************************/
 package org.eclipse.kura.system;
 
@@ -29,9 +30,25 @@ import org.osgi.framework.Bundle;
  */
 public interface SystemService 
 {
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KURA_CONFIG      = "kura.configuration";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KURA_PROPS_FILE  = "kura.properties";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KURA_CUSTOM_CONFIG      = "kura.custom.configuration";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KURA_CUSTOM_PROPS_FILE  = "kura_custom.properties";
 	public static final String OS_CLOUDBEES    = "Linux (Cloudbees)";
 	public static final String OS_LINUX        = "Linux";
@@ -50,14 +67,38 @@ public interface SystemService
 	public static final String KEY_BIOS_VERSION                            = "kura.bios.version";
 	public static final String KEY_FIRMWARE_VERSION                        = "kura.firmware.version";
 	public static final String KEY_PRIMARY_NET_IFACE                       = "kura.primary.network.interface";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_HOME_DIR                           = "kura.home";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_PLUGINS_DIR                        = "kura.plugins";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_DATA_DIR                           = "kura.data";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_TMP_DIR                            = "kura.tmp";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_SNAPSHOTS_DIR                      = "kura.snapshots";
 	public static final String KEY_KURA_SNAPSHOTS_COUNT                    = "kura.snapshots.count";
 	public static final String KEY_KURA_HAVE_NET_ADMIN                     = "kura.have.net.admin";
 	public static final String KEY_KURA_HAVE_WEB_INTER                     = "kura.have.web.inter";
+	/**
+	 * @deprecated Don't use directly, use the SystemConfigurationService instead
+	 */
+	@Deprecated
 	public static final String KEY_KURA_STYLE_DIR	                       = "kura.style.dir";
 	public static final String KEY_KURA_WIFI_TOP_CHANNEL                   = "kura.wifi.top.channel";
     public static final String KEY_KURA_KEY_STORE_PWD                      = "kura.ssl.keyStorePassword";
@@ -278,6 +319,7 @@ public interface SystemService
 	 * Gets the location where the Kura root directory is stored in the filesystem.
 	 * 
 	 * @return	The root Kura directory.
+	 * @deprecated Use either {@link SystemConfigurationService#getConfigurationLocation(String)} or {@link SystemConfigurationService#getDataLocation(String)}
 	 */
 	public String getKuraHome();
 	

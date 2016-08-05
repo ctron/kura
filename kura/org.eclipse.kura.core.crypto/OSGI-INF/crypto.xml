@@ -18,4 +18,5 @@
       <provide interface="org.eclipse.kura.crypto.CryptoService"/>
    </service>
    <property name="service.pid" value="org.eclipse.kura.crypto.CryptoService"/>
+   <reference bind="setSystemConfigurationService" cardinality="1..1" interface="org.eclipse.kura.system.SystemConfigurationService" name="SystemConfigurationService" policy="static"/>
 </scr:component>

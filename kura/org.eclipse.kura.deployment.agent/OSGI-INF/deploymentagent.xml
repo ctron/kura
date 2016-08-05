@@ -19,4 +19,6 @@
    <service>
       <provide interface="org.eclipse.kura.deployment.agent.DeploymentAgentService"/>
    </service>
+   <reference bind="setDeploymentLocation" cardinality="1..1" interface="org.eclipse.kura.deployment.base.DeploymentLocation" name="DeploymentLocation" policy="static"/>
+   <reference bind="setSystemConfigurationService" cardinality="1..1" interface="org.eclipse.kura.system.SystemConfigurationService" name="SystemConfigurationService" policy="static"/>
 </scr:component>

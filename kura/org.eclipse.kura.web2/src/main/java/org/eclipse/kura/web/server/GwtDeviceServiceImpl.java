@@ -15,7 +15,6 @@ package org.eclipse.kura.web.server;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -181,21 +180,20 @@ public class GwtDeviceServiceImpl extends OsgiRemoteServiceServlet implements Gw
         return new ArrayList<GwtGroupedNVPair>(pairs);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public ArrayList<GwtGroupedNVPair> findSystemProperties(GwtXSRFToken xsrfToken) 
             throws GwtKuraException 
     {
         checkXSRFToken(xsrfToken);
-        List<GwtGroupedNVPair> pairs = new ArrayList<GwtGroupedNVPair>();
+        final List<GwtGroupedNVPair> pairs = new ArrayList<GwtGroupedNVPair>();
         // kura properties
-        SystemService systemService = ServiceLocator.getInstance().getService(SystemService.class);
-        Properties kuraProps = systemService.getProperties();
-        SortedSet kuraKeys = new TreeSet( kuraProps.keySet() );
-        for (Iterator ki = kuraKeys.iterator(); ki.hasNext(); )
+        final SystemService systemService = ServiceLocator.getInstance().getService(SystemService.class);
+        final Properties kuraProps = systemService.getProperties();
+        
+        final SortedSet<String> kuraKeys = new TreeSet<String>( kuraProps.stringPropertyNames() );
+        for ( String key : kuraKeys )
         {
-            Object key = ki.next();
-            pairs.add( new GwtGroupedNVPair("propsKura", key.toString(), kuraProps.get(key).toString()));
+            pairs.add( new GwtGroupedNVPair("propsKura", key, kuraProps.getProperty(key)));
         }		
         return new ArrayList<GwtGroupedNVPair>(pairs);
     }

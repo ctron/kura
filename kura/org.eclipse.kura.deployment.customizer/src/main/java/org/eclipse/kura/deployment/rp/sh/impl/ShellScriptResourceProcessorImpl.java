@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Eurotech
+ *     Jens Reimann <jreimann@redhat.com> - Refactor system properties handling  
  *******************************************************************************/
 package org.eclipse.kura.deployment.rp.sh.impl;
 
@@ -16,8 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,9 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.kura.deployment.base.DeploymentLocation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentException;
@@ -40,9 +39,6 @@ import org.slf4j.LoggerFactory;
 
 public class ShellScriptResourceProcessorImpl implements ResourceProcessor {
 	private static Logger s_logger = LoggerFactory.getLogger(ShellScriptResourceProcessorImpl.class);
-	
-	private static final String KURA_CONF_URL_PROPNAME = "kura.configuration";
-	private static final String PACKAGES_PATH_PROPNAME = "kura.packages";
 	
 	private static final String INSTALL_ACTION = "install";
 	private static final String UNINSTALL_ACTION = "uninstall";
@@ -59,40 +55,17 @@ public class ShellScriptResourceProcessorImpl implements ResourceProcessor {
 	
 	BundleContext m_bundleContext;
 	
+	private DeploymentLocation deploymentLocation;
+	
+	public void setDeploymentLocation(DeploymentLocation deploymentLocation) {
+		this.deploymentLocation = deploymentLocation;
+	}
+	
 	protected void activate(BundleContext bundleContext) {
 		s_logger.info("activate");
 		m_bundleContext = bundleContext;
-		
-		String sKuraConfUrl = System.getProperty(KURA_CONF_URL_PROPNAME);
-		if (sKuraConfUrl == null || sKuraConfUrl.isEmpty()) {
-			throw new ComponentException("The value of '" + KURA_CONF_URL_PROPNAME + "' is not defined");
-		}
-				
-		URL kuraUrl = null;
-		try {
-			kuraUrl = new URL(sKuraConfUrl);
-		} catch (MalformedURLException e) {
-			throw new ComponentException("Invalid Kura configuration URL");
-		}
-		
-		Properties kuraProperties = new Properties();
-		try {
-			kuraProperties.load(kuraUrl.openStream());
-		} catch (FileNotFoundException e) {
-			throw new ComponentException("Kura configuration file not found", e);
-		} catch (IOException e) {
-			throw new ComponentException("Exception loading Kura configuration file", e);
-		}
-		
-		String packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);		
-		if (packagesPath == null || packagesPath.isEmpty()) {
-			throw new ComponentException("The value of '" + PACKAGES_PATH_PROPNAME + "' is not defined");
-		}
-		if(kuraProperties.getProperty(PACKAGES_PATH_PROPNAME) != null && kuraProperties.getProperty(PACKAGES_PATH_PROPNAME).trim().equals("kura/packages")) {
-			kuraProperties.setProperty(PACKAGES_PATH_PROPNAME, "/opt/eurotech/kura/kura/packages");
-			packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);
-			s_logger.warn("Overridding invalid kura.packages location");
-		}
+
+		final File packagesPath = this.deploymentLocation.getPackagesLocation();
 		
 		m_resourcesRootDirectory = new File(packagesPath, "resources");
 		if (!m_resourcesRootDirectory.exists()) {

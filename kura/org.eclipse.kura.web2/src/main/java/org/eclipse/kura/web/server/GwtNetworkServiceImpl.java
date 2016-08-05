@@ -106,6 +106,10 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
     public ArrayList<GwtNetInterfaceConfig> findNetInterfaceConfigurations() throws GwtKuraException {
         ArrayList<GwtNetInterfaceConfig> result= privateFindNetInterfaceConfigurations();
 
+        if(result==null) {
+        	return null;
+        }
+        
         //List<GwtNetInterfaceConfig> listResult= result.
         for(GwtNetInterfaceConfig netConfig: result){
             if(netConfig instanceof GwtWifiNetInterfaceConfig){

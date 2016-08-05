@@ -8,15 +8,13 @@
  *
  * Contributors:
  *     Eurotech
+ *     Jens Reimann <jreimann@redhat.com> - Refactor system properties and paths
  *******************************************************************************/
 package org.eclipse.kura.linux.gpio;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,8 +25,7 @@ import org.eclipse.kura.gpio.KuraGPIODirection;
 import org.eclipse.kura.gpio.KuraGPIOMode;
 import org.eclipse.kura.gpio.KuraGPIOPin;
 import org.eclipse.kura.gpio.KuraGPIOTrigger;
-import org.eclipse.kura.system.SystemService;
-import org.osgi.service.component.ComponentContext;
+import org.eclipse.kura.system.SystemConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,31 +36,26 @@ public class GPIOServiceImpl implements GPIOService {
 
 	private static final HashSet<JdkDioPin> pins = new HashSet<JdkDioPin>();
 
-	private SystemService m_SystemService;
+	private SystemConfigurationService systemConfigurationService;
 
-	public void setSystemService(SystemService systemService) {
-		m_SystemService = systemService;
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
 	}
 
-	public void unsetSystemService(SystemService systemService) {
-		m_SystemService = null;
-	}
-
-	protected void activate(ComponentContext componentContext) {
+	protected void activate() {
 		s_logger.debug("activating jdk.dio GPIOService");
 
-		File dioPropsFile= null;
 		FileReader fr= null;
 		try {
-			String configFile = System.getProperty("jdk.dio.registry");
+			final File dioPropsFile;
+			final String configFile = System.getProperty("jdk.dio.registry");
 			if(configFile == null){
 				//Emulator?
-				configFile = m_SystemService.getProperties().getProperty("kura.configuration").replace("kura.properties", "jdk.dio.properties");
+				dioPropsFile = this.systemConfigurationService.getConfigurationLocation ("jdk.dio.properties");
 			}else{
-				configFile = "file:"+configFile;
+				dioPropsFile = new File ( configFile );
 			}
 			
-			dioPropsFile = new File(new URL(configFile).toURI());
 			if (dioPropsFile.exists()) {
 				Properties dioDefaults = new Properties();
 				fr= new FileReader(dioPropsFile);
@@ -85,11 +77,7 @@ public class GPIOServiceImpl implements GPIOService {
 			} else {
 				s_logger.warn("File does not exist: " + dioPropsFile);
 			}
-		} catch (FileNotFoundException e) {
-			s_logger.error("Exception while accessing resource!", e);
 		} catch (IOException e) {
-			s_logger.error("Exception while accessing resource!", e);
-		} catch (URISyntaxException e) {
 			s_logger.error("Exception while accessing resource!", e);
 		} finally {
 			if (fr != null){
@@ -104,7 +92,7 @@ public class GPIOServiceImpl implements GPIOService {
 		s_logger.debug("GPIOService activated.");
 	}
 
-	protected void deactivate(ComponentContext componentContext) {
+	protected void deactivate() {
 		s_logger.debug("deactivating jdk.dio GPIOService");
 	}
 

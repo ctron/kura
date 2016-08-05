@@ -14,12 +14,10 @@ package org.eclipse.kura.deployment.agent.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -35,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.kura.deployment.agent.DeploymentAgentService;
+import org.eclipse.kura.deployment.base.DeploymentLocation;
+import org.eclipse.kura.system.SystemConfigurationService;
 import org.osgi.framework.Version;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.ComponentException;
@@ -72,8 +72,6 @@ public class DeploymentAgent implements DeploymentAgentService {
 	private static Logger s_logger = LoggerFactory.getLogger(DeploymentAgent.class);
 
 	private static final String DPA_CONF_PATH_PROPNAME = "dpa.configuration";
-	private static final String KURA_CONF_URL_PROPNAME  = "kura.configuration";
-	private static final String PACKAGES_PATH_PROPNAME = "kura.packages";
 
 	private static final String CONN_TIMEOUT_PROPNAME = "dpa.connection.timeout";
 	private static final String READ_TIMEOUT_PROPNAME = "dpa.read.timeout";
@@ -99,6 +97,18 @@ public class DeploymentAgent implements DeploymentAgentService {
 
 	private int m_connTimeout;
 	private int m_readTimeout;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	private DeploymentLocation deploymentLocation; 
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+	
+	public void setDeploymentLocation(DeploymentLocation deploymentLocation) {
+		this.deploymentLocation = deploymentLocation;
+	}
 
 	protected void activate(ComponentContext componentContext) {
 
@@ -109,43 +119,15 @@ public class DeploymentAgent implements DeploymentAgentService {
 			throw new ComponentException("The value of '" + DPA_CONF_PATH_PROPNAME + "' is not defined");
 		}
 
-		String sKuraConfUrl = System.getProperty(KURA_CONF_URL_PROPNAME);
-		if (sKuraConfUrl == null || sKuraConfUrl.isEmpty()) {
-			throw new ComponentException("The value of '" + KURA_CONF_URL_PROPNAME + "' is not defined");
-		}
+		final File packagesPath = this.deploymentLocation.getPackagesLocation();
+		m_packagesPath = packagesPath.getAbsolutePath();
 
-		URL kuraUrl = null;
-		try {
-			kuraUrl = new URL(sKuraConfUrl);
-		} catch (MalformedURLException e) {
-			throw new ComponentException("Invalid Kura configuration URL");
-		}
-
-		Properties kuraProperties = new Properties();
-		try {
-			kuraProperties.load(kuraUrl.openStream());
-		} catch (FileNotFoundException e) {
-			throw new ComponentException("Kura configuration file not found", e);
-		} catch (IOException e) {
-			throw new ComponentException("Exception loading Kura configuration file", e);
-		}
-
-		m_packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);
-		if (m_packagesPath == null || m_packagesPath.isEmpty()) {
-			throw new ComponentException("The value of '" + PACKAGES_PATH_PROPNAME + "' is not defined");
-		}
-		if(kuraProperties.getProperty(PACKAGES_PATH_PROPNAME) != null && kuraProperties.getProperty(PACKAGES_PATH_PROPNAME).trim().equals("kura/packages")) {
-			kuraProperties.setProperty(PACKAGES_PATH_PROPNAME, "/opt/eclipse/kura/kura/packages");
-			m_packagesPath = kuraProperties.getProperty(PACKAGES_PATH_PROPNAME);
-			s_logger.warn("Overridding invalid kura.packages location");
-		}
-
-		String sConnTimeout = kuraProperties.getProperty(CONN_TIMEOUT_PROPNAME);
+		String sConnTimeout = this.systemConfigurationService.getProperty(CONN_TIMEOUT_PROPNAME);
 		if (sConnTimeout != null) {
 			m_connTimeout = Integer.valueOf(sConnTimeout);
 		}
 
-		String sReadTimeout = kuraProperties.getProperty(READ_TIMEOUT_PROPNAME);
+		String sReadTimeout = this.systemConfigurationService.getProperty(READ_TIMEOUT_PROPNAME);
 		if (sReadTimeout != null) {
 			m_readTimeout = Integer.valueOf(sReadTimeout);
 		}

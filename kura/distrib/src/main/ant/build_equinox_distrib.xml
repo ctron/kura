@@ -9,6 +9,7 @@
 
     Contributors:
       Eurotech
+      Jens Reimann <jreimann@redhat.com> - add new bundles
 
 -->
 <project name="build_equinox_distrib" default="dist-linux" basedir="../../../">
@@ -441,6 +442,12 @@ fi
 
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.deployment.agent_${org.eclipse.kura.deployment.agent.version}.jar"
                         prefix="${build.output.name}/kura/plugins" />
+			
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.deployment.base_${org.eclipse.kura.deployment.base.version}.jar"
+                        prefix="${build.output.name}/kura/plugins" />
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.internal.deployment.base.legacy_${org.eclipse.kura.internal.deployment.base.legacy.version}.jar"
+                    	prefix="${build.output.name}/kura/plugins" />
+			
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.api_${org.eclipse.kura.api.version}.jar"
                         prefix="${build.output.name}/kura/plugins" />
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.core_${org.eclipse.kura.core.version}.jar"
@@ -753,6 +760,10 @@ Resource-Processor: org.eclipse.kura.deployment.customizer.upgrade.rp.UpgradeScr
 		<propertyfile file="${project.build.directory}/${build.output.name}/config.ini">
 			<entry key="osgi.bundles" operation="+"
 				value=", reference:file:${kura.install.dir}/kura/kura/plugins/org.eclipse.kura.core.deployment_${org.eclipse.kura.core.deployment.version}.jar@4:start" />
+			<entry key="osgi.bundles" operation="+"
+				value=", reference:file:${kura.install.dir}/kura/kura/plugins/org.eclipse.kura.deployment.base_${org.eclipse.kura.deployment.base.version}.jar@4:start" />
+			<entry key="osgi.bundles" operation="+"
+				value=", reference:file:${kura.install.dir}/kura/kura/plugins/org.eclipse.kura.internal.deployment.base.legacy_${org.eclipse.kura.internal.deployment.base.legacy.version}.jar@4:start" />
 		</propertyfile>
 	</target>
 	

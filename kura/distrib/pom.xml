@@ -10,6 +10,7 @@
 
     Contributors:
       Eurotech
+      Jens Reimann <jreimann@redhat.com> - Add new bundles
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -153,6 +154,11 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.eclipse.kura</groupId>
+									<artifactId>org.eclipse.kura.deployment.base</artifactId>
+									<version>${org.eclipse.kura.deployment.base.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.eclipse.kura</groupId>
 									<artifactId>org.eclipse.kura.deployment.customizer</artifactId>
 									<version>${org.eclipse.kura.deployment.customizer.version}</version>
 								</artifactItem>
@@ -200,6 +206,11 @@
 									<groupId>org.eclipse.kura</groupId>
 									<artifactId>org.eclipse.kura.emulator.watchdog</artifactId>
 									<version>${org.eclipse.kura.emulator.watchdog.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.eclipse.kura</groupId>
+									<artifactId>org.eclipse.kura.internal.deployment.base.legacy</artifactId>
+									<version>${org.eclipse.kura.internal.deployment.base.legacy.version}</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.eclipse.kura</groupId>
@@ -359,9 +370,11 @@
 							  	<move file="target/plugins/org.eclipse.kura.core.log.jar" tofile="target/plugins/org.eclipse.kura.core.log_${org.eclipse.kura.core.log.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.core.net.jar" tofile="target/plugins/org.eclipse.kura.core.net_${org.eclipse.kura.core.net.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.deployment.agent.jar" tofile="target/plugins/org.eclipse.kura.deployment.agent_${org.eclipse.kura.deployment.agent.version}.jar"/>
+							    <move file="target/plugins/org.eclipse.kura.deployment.base.jar" tofile="target/plugins/org.eclipse.kura.deployment.base_${org.eclipse.kura.deployment.base.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.deployment.customizer.jar" tofile="target/plugins/org.eclipse.kura.deployment.customizer_${org.eclipse.kura.deployment.customizer.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.deployment.customizer.upgrade.jar" tofile="target/plugins/org.eclipse.kura.deployment.customizer.upgrade_${org.eclipse.kura.deployment.customizer.upgrade.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.deployment.update.jar" tofile="target/plugins/org.eclipse.kura.deployment.update_${org.eclipse.kura.deployment.update.version}.jar"/>
+							    <move file="target/plugins/org.eclipse.kura.internal.deployment.base.legacy.jar" tofile="target/plugins/org.eclipse.kura.internal.deployment.base.legacy_${org.eclipse.kura.internal.deployment.base.legacy.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.linux.clock.jar" tofile="target/plugins/org.eclipse.kura.linux.clock_${org.eclipse.kura.linux.clock.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.linux.command.jar" tofile="target/plugins/org.eclipse.kura.linux.command_${org.eclipse.kura.linux.command.version}.jar"/>
 							    <move file="target/plugins/org.eclipse.kura.linux.net.jar" tofile="target/plugins/org.eclipse.kura.linux.net_${org.eclipse.kura.linux.net.version}.jar"/>
