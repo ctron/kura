@@ -62,7 +62,7 @@
 		
 		<!-- web UI -->
 		
-		<module>org.eclipse.kura.web2</module>
+		<module>org.eclipse.kura.web</module>
 		
 		<!-- P2 features -->
 		
