@@ -15,10 +15,10 @@
 
 	<modules>
 		<module>common</module>
-		<module>equinox_3.8.1</module>
+		<module>equinox_3.11.0</module>
 		<module>manifest</module>
 	</modules>
-	
+
 	<build>
 		<plugins>
 			<plugin>

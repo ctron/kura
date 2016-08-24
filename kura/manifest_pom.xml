@@ -49,6 +49,7 @@
 		<module>org.eclipse.kura.linux.net.test</module>
 		<module>org.eclipse.kura.linux.position</module>
 		<module>org.eclipse.kura.linux.usb</module>
+		<module>org.eclipse.kura.linux.usb.armv6.hf</module>
 		<module>org.eclipse.kura.linux.watchdog</module>
 		<module>org.eclipse.kura.net.admin</module>
 		<module>org.eclipse.kura.protocol.modbus</module>
@@ -117,9 +118,9 @@
 			</activation>
 			<repositories>
 				<repository>
-					<id>p2-repo-equinox_3.8.1</id>
+					<id>p2-repo-equinox_3.11.0</id>
 					<layout>p2</layout>
-					<url>file:///${kura.basedir}/target-definition/equinox_3.8.1/repository/</url>
+					<url>file:///${kura.basedir}/target-definition/equinox_3.11.0/repository/</url>
 				</repository>
 			</repositories>
 		</profile>
@@ -133,9 +134,9 @@
 			</activation>
 			<repositories>
 				<repository>
-					<id>p2-repo-equinox_3.8.1</id>
+					<id>p2-repo-equinox_3.11.0</id>
 					<layout>p2</layout>
-					<url>file:///${kura.basedir}/target-definition/equinox_3.8.1/repository/</url>
+					<url>file:///${kura.basedir}/target-definition/equinox_3.11.0/repository/</url>
 				</repository>
 			</repositories>
 		</profile>

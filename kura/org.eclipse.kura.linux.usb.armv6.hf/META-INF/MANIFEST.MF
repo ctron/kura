@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ARMv6 HF
+Bundle-SymbolicName: org.eclipse.kura.linux.usb.armv6.hf
+Bundle-Version: 1.0.8.qualifier
+Bundle-Vendor: Eclipse Kura
+Fragment-Host: org.eclipse.kura.linux.usb
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-NativeCode: lib/libEurotechLinuxUdev.so; osname=Linux; processor=ARM, *

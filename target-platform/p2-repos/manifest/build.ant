@@ -58,7 +58,7 @@
     	<mkdir dir="${target}"/>
     	<delete file="${target}/bundleVersions.properties" />
     	<buildManifest manifestFile="${target}/bundleVersions.properties" dir="${basedir}/../common/target/repository/plugins"/>
-    	<buildManifest manifestFile="${target}/bundleVersions.properties" dir="${basedir}/../equinox_3.8.1/target/repository/plugins"/>
+    	<buildManifest manifestFile="${target}/bundleVersions.properties" dir="${basedir}/../equinox_3.11.0/target/repository/plugins"/>
     </target>
 	
 	<!-- ================================= 

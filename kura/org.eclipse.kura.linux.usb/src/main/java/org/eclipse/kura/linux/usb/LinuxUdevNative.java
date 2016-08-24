@@ -41,30 +41,7 @@ public class LinuxUdevNative {
 	 private final static long THREAD_TERMINATION_TOUT = 1; // in seconds
 	
 	static {
-		try
-		{
-		    AccessController.doPrivileged(new PrivilegedAction()
-		    {
-		        public Object run()
-		        {
-		            try
-		            {
-		                // privileged code goes here, for example:
-		            	System.loadLibrary( LIBRARY_NAME );
-		                return null; // nothing to return
-		            }
-		            catch (Exception e)
-		            {
-		                System.out.println("Unable to load: " + LIBRARY_NAME);
-		                return null;
-		            }
-		        }
-		     });
-		}
-		catch (Exception e)
-		{
-		    System.out.println("Unable to load: " + LIBRARY_NAME);
-		}
+	    System.loadLibrary( LIBRARY_NAME );
 	}
 	
 	private static boolean started;
