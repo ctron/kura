@@ -9,7 +9,11 @@
  * Contributors:
  *     Eurotech
  *     Red Hat Inc - Fix issue #462, Fix build warnings, Fix issue #596
+<<<<<<< Upstream, based on upstream/develop
  *         - track only relevant services
+=======
+ *         - Fix service registration
+>>>>>>> 74eb490 Fix issue #596 by providing `null` as location
  *******************************************************************************/
 package org.eclipse.kura.core.configuration;
 
