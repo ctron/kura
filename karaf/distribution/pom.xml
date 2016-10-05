@@ -216,7 +216,7 @@
                                     <key>db.service.hsqldb.url</key>
                                     <value>jdbc:hsqldb:file:${project.build.directory}/assembly/kura/data/db/data;hsqldb.lock_file=false</value>
                                 </systemProperty>
-
+                                
                             </systemProperties>
                         </configuration>
                     </plugin>
