@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <property-edits xmlns="http://karaf.apache.org/tools/property-edits/1.0.0">
 	<edits>
-		<edit>
-			<file>system.properties</file>
-			<operation>put</operation>
-			<key>kura.configuration</key>
-			<value>file:etc/kura.properties</value>
-		</edit>
-		<edit>
-			<file>system.properties</file>
-			<operation>put</operation>
-			<key>kura.data</key>
-			<value>kura/data</value>
-		</edit>
-		<edit>
-            <file>system.properties</file>
-            <operation>put</operation>
-            <key>kura.snapshots</key>
-            <value>kura/snapshots</value>
-        </edit>
         <edit>
             <file>system.properties</file>
             <operation>put</operation>

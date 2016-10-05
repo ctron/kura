@@ -118,7 +118,7 @@
                         <feature>package</feature>
                         <feature>service</feature>
                         <feature>system</feature>
-                        
+
                         <feature>webconsole</feature>
 
                         <feature>kura-runtime</feature>
@@ -206,10 +206,15 @@
                                     <key>kura.plugins</key>
                                     <value>${project.build.directory}/assembly/kura/plugins</value>
                                 </systemProperty>
-                                
+
                                 <systemProperty>
                                     <key>dpa.configuration</key>
                                     <value>${project.build.directory}/assembly/etc/dpa.properties</value>
+                                </systemProperty>
+
+                                <systemProperty>
+                                    <key>db.service.hsqldb.url</key>
+                                    <value>jdbc:hsqldb:file:${project.build.directory}/assembly/kura/data/db/data;hsqldb.lock_file=false</value>
                                 </systemProperty>
 
                             </systemProperties>
