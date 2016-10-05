@@ -82,7 +82,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	private static final Logger s_logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
-	private interface ServiceHandler {
+    private static final boolean TRACK_ONLY_RELEVANT_SERVICES = Boolean.getBoolean("org.eclipse.kura.core.configuration.trackOnlyRelevantServices");
+
+    private interface ServiceHandler {
 
 		void add(String servicePid, String kuraPid, String factoryPid);
 
@@ -115,10 +117,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 	};
 
-	private ComponentContext m_ctx;
-	private ServiceTracker<ConfigurableComponent, ConfigurableComponent> serviceTracker1;
-	private ServiceTracker<SelfConfiguringComponent, SelfConfiguringComponent> serviceTracker2;
-	private BundleTracker<Bundle> m_bundleTracker;
+    private ComponentContext m_ctx;
+
+    private ServiceTracker<ConfigurableComponent, ConfigurableComponent> serviceTracker1;
+    private ServiceTracker<SelfConfiguringComponent, SelfConfiguringComponent> serviceTracker2;
+    private ConfigurableComponentTracker anyTracker;
+
+    private BundleTracker<Bundle> m_bundleTracker;
 
 	@SuppressWarnings("unused")
 	private MetaTypeService m_metaTypeService;
@@ -219,11 +224,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// start the trackers
 		s_logger.info("Trackers being opened...");
 
-		this.serviceTracker1 = createTracker(ConfigurableComponent.class, this.trackerHandler1);
-		this.serviceTracker2 = createTracker(SelfConfiguringComponent.class, this.trackerHandler2);
+        if (TRACK_ONLY_RELEVANT_SERVICES) {
+            s_logger.info("Only tracking relevant services");
+            this.serviceTracker1 = createTracker(ConfigurableComponent.class, this.trackerHandler1);
+            this.serviceTracker2 = createTracker(SelfConfiguringComponent.class, this.trackerHandler2);
 
-		this.serviceTracker1.open();
-		this.serviceTracker2.open();
+            this.serviceTracker1.open();
+            this.serviceTracker2.open();
+        } else {
+            s_logger.info("Tracking all services");
+            this.anyTracker = new ConfigurableComponentTracker(this.m_ctx.getBundleContext(), this);
+        }
 
 		this.m_bundleTracker = new ComponentMetaTypeBundleTracker(this.m_ctx.getBundleContext(), this);
 		this.m_bundleTracker.open();
@@ -236,9 +247,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			public T addingService(ServiceReference<T> reference) {
 				s_logger.debug("addingService - ref: {}", reference);
 
-				final String servicePid = makeString(reference.getProperty(Constants.SERVICE_PID));
-				final String kuraPid = makeString(reference.getProperty(ConfigurationService.KURA_SERVICE_PID));
-				final String factoryPid = makeString(reference.getProperty(ConfigurationAdmin.SERVICE_FACTORYPID));
+                String servicePid = makeString(reference.getProperty(Constants.SERVICE_PID));
+                String kuraPid = makeString(reference.getProperty(ConfigurationService.KURA_SERVICE_PID));
+                String factoryPid = makeString(reference.getProperty(ConfigurationAdmin.SERVICE_FACTORYPID));
 
 				if (servicePid == null) {
 					s_logger.debug("No servicePid found");
@@ -279,21 +290,27 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	protected void deactivate(ComponentContext componentContext) {
 		s_logger.info("deactivate...");
 
-		//
-		// stop the trackers
-		if (this.serviceTracker2 != null) {
-			this.serviceTracker2.close();
-			this.serviceTracker2 = null;
-		}
-		if (this.serviceTracker1 != null) {
-			this.serviceTracker1.close();
-			this.serviceTracker1 = null;
-		}
-		if (this.m_bundleTracker != null) {
-			this.m_bundleTracker.close();
-			this.m_bundleTracker = null;
-		}
-	}
+        //
+        // stop the trackers
+        //
+
+        if (this.anyTracker != null) {
+            this.anyTracker.close();
+            this.anyTracker = null;
+        }
+        if (this.serviceTracker2 != null) {
+            this.serviceTracker2.close();
+            this.serviceTracker2 = null;
+        }
+        if (this.serviceTracker1 != null) {
+            this.serviceTracker1.close();
+            this.serviceTracker1 = null;
+        }
+        if (this.m_bundleTracker != null) {
+            this.m_bundleTracker.close();
+            this.m_bundleTracker = null;
+        }
+    }
 
 	// ----------------------------------------------------------------
 	//
@@ -331,15 +348,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		updateConfiguration(pidToUpdate, propertiesToUpdate, true);
 	}
 
-	@Override
-	public synchronized void updateConfiguration(String pidToUpdate, Map<String, Object> propertiesToUpdate,
-			boolean takeSnapshot) throws KuraException { // don't call this
-															// method internally
-		List<ComponentConfiguration> configs = new ArrayList<ComponentConfiguration>();
-		ComponentConfigurationImpl cci = new ComponentConfigurationImpl(pidToUpdate, null, propertiesToUpdate);
-		configs.add(cci);
-		updateConfigurations(configs, takeSnapshot);
-	}
+    @Override
+    public synchronized void updateConfiguration(String pidToUpdate, Map<String, Object> propertiesToUpdate, boolean takeSnapshot) throws KuraException { // don't call this method
+                                                                                                                                                          // internally
+        List<ComponentConfiguration> configs = new ArrayList<ComponentConfiguration>();
+        ComponentConfigurationImpl cci = new ComponentConfigurationImpl(pidToUpdate, null, propertiesToUpdate);
+        configs.add(cci);
+        updateConfigurations(configs, takeSnapshot);
+    }
 
 	// Don't perform internal calls to this method
 	@Override
