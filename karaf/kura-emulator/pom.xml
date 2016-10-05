@@ -48,6 +48,15 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
+                
+                <configuration>
+                    <!--
+                      - The emulator provides the initial snapshot file which should be present
+                      - before the rest is being started.
+                      -->
+                    <startLevel>40</startLevel>
+                </configuration>
+                
                 <executions>
                     <execution>
                         <id>verify</id>
