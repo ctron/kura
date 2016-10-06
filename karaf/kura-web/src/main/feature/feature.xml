@@ -5,7 +5,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xmlns/features/v1.4.0"
     >
-    <feature name="kura-web" description="Eclipse Kura :: Web UI" version="0.0.1.SNAPSHOT">
+    <feature name="kura-web">
         <feature>webconsole</feature>
         <feature>kura-core</feature>
         <bundle dependency="true">mvn:commons-fileupload/commons-fileupload/1.2.2</bundle>
