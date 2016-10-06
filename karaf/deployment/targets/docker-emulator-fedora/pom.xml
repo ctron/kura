@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.eclipse.kura</groupId>
+        <artifactId>deployment</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../..</relativePath>
+    </parent>
+
+    <artifactId>docker-emulator-fedora</artifactId>
+    <packaging>karaf-assembly</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.eclipse.kura</groupId>
+            <artifactId>kura-emulator</artifactId>
+            <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <configuration>
+                    <aggregateFeatures>true</aggregateFeatures>
+                    <bootFeatures combine.children="append">
+                        <feature>kura-emulator</feature>
+                    </bootFeatures>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-by-ant</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <mkdir dir="target/distribution" />
+                                <copy todir="target/distribution">
+                                    <fileset dir="target/assembly">
+                                        <exclude name="bin/*.bat" />
+                                        <exclude name="bin/contrib/**" />
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>de.dentrassi.maven</groupId>
+                <artifactId>rpm</artifactId>
+                <version>0.8.0</version>
+                <configuration>
+
+                    <rulesets>
+                        <ruleset>
+                            <id>karaf-rules</id>
+                            <rules>
+                                <rule>
+                                    <mode>0755</mode>
+                                    <when>
+                                        <prefix>/opt/eclipse/kura/bin</prefix>
+                                    </when>
+                                </rule>
+                                <rule>
+                                    <configuration>true</configuration>
+                                    <when>
+                                        <prefix>/opt/eclipse/kura/etc</prefix>
+                                    </when>
+                                </rule>
+                                <rule>
+                                    <configuration>true</configuration>
+                                    <when>
+                                        <prefix>/etc</prefix>
+                                    </when>
+                                </rule>
+                            </rules>
+                        </ruleset>
+                    </rulesets>
+
+                    <requires>
+                        <require>jre-1.8.0-headless</require>
+                        <require>procps</require>
+                    </requires>
+
+                    <entries>
+
+                        <entry>
+                            <name>/opt/eclipse/kura</name>
+                            <directory>true</directory>
+                        </entry>
+
+                        <entry>
+                            <name>/etc/kura</name>
+                            <directory>true</directory>
+                        </entry>
+
+                        <entry>
+                            <name>/var/kura</name>
+                            <directory>true</directory>
+                        </entry>
+
+                        <entry>
+                            <name>/var/kura/data</name>
+                            <directory>true</directory>
+                        </entry>
+
+                        <entry>
+                            <name>/var/kura/snapshots</name>
+                            <directory>true</directory>
+                        </entry>
+
+                        <entry>
+                            <name>/var/kura/packages</name>
+                            <directory>true</directory>
+                        </entry>
+                    
+                        <!-- the main karaf distribution -->
+
+                        <entry>
+                            <name>/opt/eclipse/kura</name>
+                            <collect>
+                                <from>target/distribution</from>
+                            </collect>
+                            <ruleset>karaf-rules</ruleset>
+                        </entry>
+
+                        <entry>
+                            <name>/</name>
+                            <collect>
+                                <from>target/classes</from>
+                                <directories>false</directories>
+                            </collect>
+                            <ruleset>karaf-rules</ruleset>
+                        </entry>
+                    </entries>
+                    <skipSigning>true</skipSigning>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
