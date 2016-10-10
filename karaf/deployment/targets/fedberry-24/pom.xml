@@ -9,14 +9,14 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>docker-emulator-fedora</artifactId>
+    <artifactId>fedberry-24</artifactId>
     <packaging>karaf-assembly</packaging>
 
     <dependencies>
 
         <dependency>
             <groupId>org.eclipse.kura.karaf</groupId>
-            <artifactId>kura-emulator</artifactId>
+            <artifactId>kura-linux</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
             <type>xml</type>
@@ -34,11 +34,7 @@
                 <configuration>
                     <aggregateFeatures>true</aggregateFeatures>
                     <bootFeatures combine.children="append">
-                        <feature>management</feature>
-                        <feature>diagnostic</feature>
-                        <feature>instance</feature>
-
-                        <feature>kura-emulator</feature>
+                        <feature>kura-linux</feature>
                     </bootFeatures>
                 </configuration>
             </plugin>

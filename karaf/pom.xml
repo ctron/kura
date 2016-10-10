@@ -2,10 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.eclipse.kura</groupId>
+	<groupId>org.eclipse.kura.karaf</groupId>
 	<artifactId>karaf</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+    
+    <name>Eclipse Kura on Apache Karaf</name>
 
 	<properties>
 		<karaf.version.plugin>4.0.5</karaf.version.plugin>
@@ -19,8 +21,9 @@
 		<module>kura-core</module>
 		<module>kura-web</module>
 		<module>kura-emulator</module>
+        <module>kura-linux</module>
 
-		<module>distribution</module>
+		<module>emulator</module>
 	</modules>
 
 	<build>

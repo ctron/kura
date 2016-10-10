@@ -9,3 +9,11 @@ This is an experimental Karaf setup.
 * Run `mvn clean install` in order to generate a Karaf distribution in `distribution`
 
 * Run `cd distribution; mvn exec:java -Prun` in order to run the local Karaf distribution
+
+# Building Karaf based targets
+
+** This is extra-experimental and subject to change **
+
+
+    cd deployment
+    mvn clean package

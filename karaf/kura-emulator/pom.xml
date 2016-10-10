@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.eclipse.kura</groupId>
+        <groupId>org.eclipse.kura.karaf</groupId>
         <artifactId>karaf</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.kura</groupId>
+            <groupId>org.eclipse.kura.karaf</groupId>
             <artifactId>kura-core</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
@@ -73,7 +73,7 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.eclipse.kura/kura-runtime/${project.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.eclipse.kura.karaf/kura-runtime/${project.version}/xml/features</descriptor>
                                 <descriptor>file:${project.build.directory}/feature/feature.xml</descriptor>
                             </descriptors>
                             <distribution>org.apache.karaf.features:framework</distribution>
