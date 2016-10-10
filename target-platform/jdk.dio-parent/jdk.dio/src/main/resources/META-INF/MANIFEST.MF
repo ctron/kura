@@ -1,0 +1,17 @@
+Manifest-Version: 1
+Export-Package: jdk.dio.generic;uses:="jdk.dio";version="1.0.5",jdk.di
+ o.uart;uses:="jdk.dio.modem,jdk.dio";version="1.0.5",jdk.dio.gpio;use
+ s:="jdk.dio";version="1.0.5",jdk.dio.adc;uses:="jdk.dio";version="1.0
+ .5",jdk.dio.watchdog;uses:="jdk.dio";version="1.0.5",jdk.dio.power;us
+ es:="jdk.dio";version="1.0.5",jdk.dio.spibus;uses:="jdk.dio";version=
+ "1.0.5",jdk.dio.i2cbus;uses:="jdk.dio";version="1.0.5",jdk.dio.dac;us
+ es:="jdk.dio";version="1.0.5",jdk.dio.spi;uses:="jdk.dio";version="1.
+ 0.5",jdk.dio.atcmd;uses:="jdk.dio,jdk.dio.modem";version="1.0.5",jdk.
+ dio.modem;uses:="jdk.dio";version="1.0.5",jdk.dio;uses:="jdk.dio.spi"
+ ;version="1.0.5"
+Bundle-Name: Device IO
+Bundle-ManifestVersion: 2
+Bundle-Description: OpenJDK Device IO implementation
+Import-Package: jdk.dio.atcmd,jdk.dio.i2cbus,jdk.dio.modem,jdk.dio.spi
+ bus,jdk.dio.uart
+Bundle-SymbolicName: jdk.dio
