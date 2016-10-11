@@ -21,7 +21,9 @@
 		<module>kura-core</module>
 		<module>kura-web</module>
 		<module>kura-emulator</module>
+        
         <module>kura-linux</module>
+        <module>kura-linux-armv6hf</module>
 
 		<module>emulator</module>
 	</modules>

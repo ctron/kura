@@ -6,7 +6,7 @@
     xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xmlns/features/v1.4.0"
     >
     
-    <feature name="kura-linux" description="Eclipse Kura :: Linux" version="0.0.1.SNAPSHOT">
+    <feature name="kura-linux">
         <feature>kura-core</feature>
     </feature>
     

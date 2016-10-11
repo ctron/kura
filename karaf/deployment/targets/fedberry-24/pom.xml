@@ -23,6 +23,15 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.kura.karaf</groupId>
+            <artifactId>kura-linux-armv6hf</artifactId>
+            <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+        
     </dependencies>
 
     <build>
@@ -34,7 +43,7 @@
                 <configuration>
                     <aggregateFeatures>true</aggregateFeatures>
                     <bootFeatures combine.children="append">
-                        <feature>kura-linux</feature>
+                        <feature>kura-linux-armv6hf</feature>
                     </bootFeatures>
                 </configuration>
             </plugin>

@@ -98,7 +98,7 @@
         </dependency>
         
         <dependency>
-            <groupId>jdk</groupId>
+            <groupId>org.eclipse.kura</groupId>
             <artifactId>jdk.dio</artifactId>
             <version>[1.0,2.0)</version>
         </dependency>

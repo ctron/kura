@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features
+    xmlns="http://karaf.apache.org/xmlns/features/v1.4.0"
+    name="kura-linux-armv6hf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xmlns/features/v1.4.0"
+    >
+    
+    <feature name="kura-linux-armv6hf">
+        <feature prerequisite="true" dependency="true">kura-linux-armv6hf-natives</feature>
+        <feature>kura-linux</feature>
+    </feature>
+    
+    <feature name="kura-linux-armv6hf-natives" version="${project.version}">
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.armv6hf/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/jdk.dio.armv6hf/1.0.6-SNAPSHOT</bundle>
+    </feature>    
+    
+</features>
