@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>emulator</artifactId>
+    <artifactId>emulator-instance</artifactId>
     <packaging>karaf-assembly</packaging>
     <name>Local Karaf distribution assembly</name>
 
