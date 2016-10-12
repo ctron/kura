@@ -8,7 +8,14 @@
             <key>karaf.framework</key>
             <value>equinox</value>
         </edit>
-     
+        
+     	<edit>
+     		<file>system.properties</file>
+     		<operation>put</operation>
+     		<key>kura.have.net.admin</key>
+     		<value>false</value>
+     	</edit>
+     	
         <edit>
             <file>system.properties</file>
             <operation>put</operation>
@@ -62,6 +69,12 @@
             <operation>put</operation>
             <key>dpa.configuration</key>
             <value>/etc/kura/dpa.properties</value>
+        </edit>
+        <edit>
+            <file>system.properties</file>
+            <operation>put</operation>
+            <key>jdk.dio.registry</key>
+            <value>/etc/kura/jdk.dio.properties</value>
         </edit>
         
         <edit>

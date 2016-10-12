@@ -7,8 +7,8 @@
     >
     
     <feature name="kura-core">
-        <feature>kura-runtime</feature>
-        <feature>scr</feature>
-        <feature>eventadmin</feature>
+        <feature dependency="true">kura-runtime</feature>
+        <feature dependency="true">scr</feature>
+        <feature dependency="true">eventadmin</feature>
     </feature>
 </features>

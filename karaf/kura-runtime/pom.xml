@@ -111,6 +111,36 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.deploymentadmin</artifactId>
             <version>1.1.0</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.osgi</groupId>
+            		<artifactId>*</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.deploymentadmin</artifactId>
+            <version>0.9.6</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.osgi</groupId>
+            		<artifactId>*</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.dependencymanager</artifactId>
+            <version>3.0.0</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.osgi</groupId>
+            		<artifactId>*</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
 		<dependency>
@@ -119,18 +149,6 @@
 			<version>2.3.0</version>
 		</dependency>
         
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.deploymentadmin</artifactId>
-            <version>0.9.6</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.dependencymanager</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
 	</dependencies>
 
 	<build>
@@ -143,7 +161,9 @@
 						<id>verify</id>
 						<phase>verify</phase>
 						<goals>
+						<!-- 
 							<goal>verify</goal>
+							-->
 						</goals>
 						<configuration>
 							<descriptors>

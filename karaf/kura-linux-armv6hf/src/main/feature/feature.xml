@@ -7,7 +7,7 @@
     >
     
     <feature name="kura-linux-armv6hf">
-        <feature prerequisite="true" dependency="true">kura-linux-armv6hf-natives</feature>
+        <feature>kura-linux-armv6hf-natives</feature>
         <feature>kura-linux</feature>
     </feature>
     

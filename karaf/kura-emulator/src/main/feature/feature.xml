@@ -7,7 +7,7 @@
     >
     
     <feature name="kura-emulator">
-        <feature>kura-core</feature>
+        <feature dependency="true">kura-core</feature>
     </feature>
     
 </features>

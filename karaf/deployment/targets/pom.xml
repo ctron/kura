@@ -104,14 +104,16 @@
                 <artifactId>karaf-maven-plugin</artifactId>
                 <configuration>
                     <startupFeatures>
-                        <feature>scr</feature>
                         <feature>eventadmin</feature>
                     </startupFeatures>
                     
                     <bootFeatures>
                         <feature>framework</feature>
-                        <feature>jaas</feature>
+                        
+                        <feature>scr</feature>
                         <feature>shell</feature>
+                        
+                        <feature>jaas</feature>
                         <feature>feature</feature>
                         <feature>ssh</feature>
                         
@@ -321,6 +323,34 @@
                         <configuration>
                             <resourceBundles combine.children="append">
                                 <resourceBundle>org.eclipse.kura.karaf.fragments:systemd:${project.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>raspberry-pi-2</id>
+            <activation>
+                <file>
+                    <exists>markers/raspberry-pi-2</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-remote-resources-plugin</artifactId>
+                        <configuration>
+                            <resourceBundles combine.children="append">
+                                <resourceBundle>org.eclipse.kura.karaf.fragments:raspberry-pi-2:${project.version}</resourceBundle>
                             </resourceBundles>
                         </configuration>
                         <executions>

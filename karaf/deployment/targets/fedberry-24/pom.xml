@@ -43,7 +43,7 @@
                 <configuration>
                     <aggregateFeatures>true</aggregateFeatures>
                     <bootFeatures combine.children="append">
-                        <feature>kura-linux-armv6hf</feature>
+                    	<feature>kura-linux-armv6hf</feature>
                     </bootFeatures>
                 </configuration>
             </plugin>

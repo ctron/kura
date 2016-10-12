@@ -48,7 +48,13 @@
             <artifactId>org.eclipse.kura.core.cloud</artifactId>
             <version>1.0.9-SNAPSHOT</version>
         </dependency>
-
+        
+        <dependency>
+            <groupId>org.eclipse.kura</groupId>
+            <artifactId>org.eclipse.kura.core.comm</artifactId>
+            <version>1.0.3-SNAPSHOT</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.eclipse.kura</groupId>
             <artifactId>org.eclipse.kura.core.configuration</artifactId>
