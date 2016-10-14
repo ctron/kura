@@ -176,8 +176,9 @@
 							<framework>
 								<feature>framework</feature>
 							</framework>
-							<ignoreMissingConditions>true</ignoreMissingConditions>
-							<verifyTransitive>false</verifyTransitive>
+                            <features>
+                                <feature>kura-runtime</feature>
+                            </features>
 						</configuration>
 					</execution>
 				</executions>

@@ -8,6 +8,8 @@
     
     <feature name="kura-linux">
         <feature dependency="true">kura-core</feature>
+        
+        <bundle dependency="true">mvn:commons-net/commons-net/3.5</bundle>
     </feature>
     
 </features>

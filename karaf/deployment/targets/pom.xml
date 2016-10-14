@@ -109,10 +109,11 @@
                     
                     <bootFeatures>
                         <feature>framework</feature>
+                        <feature>shell</feature>
+                        <feature>shell-compat</feature>
                         
                         <feature>scr</feature>
-                        <feature>shell</feature>
-                        
+
                         <feature>jaas</feature>
                         <feature>feature</feature>
                         <feature>ssh</feature>
