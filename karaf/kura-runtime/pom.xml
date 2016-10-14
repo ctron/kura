@@ -73,7 +73,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>usb4java</groupId>
+			<groupId>org.eclipse.kura</groupId>
 			<artifactId>usb4java-javax</artifactId>
 			<version>[1.0,2.0)</version>
 		</dependency>

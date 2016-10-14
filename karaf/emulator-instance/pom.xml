@@ -46,7 +46,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.kura</groupId>
+            <groupId>org.eclipse.kura.karaf</groupId>
             <artifactId>kura-runtime</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
@@ -55,7 +55,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.kura</groupId>
+            <groupId>org.eclipse.kura.karaf</groupId>
             <artifactId>kura-core</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
@@ -64,7 +64,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.kura</groupId>
+            <groupId>org.eclipse.kura.karaf</groupId>
             <artifactId>kura-web</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
@@ -73,7 +73,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.kura</groupId>
+            <groupId>org.eclipse.kura.karaf</groupId>
             <artifactId>kura-emulator</artifactId>
             <version>${project.version}</version>
             <classifier>features</classifier>
