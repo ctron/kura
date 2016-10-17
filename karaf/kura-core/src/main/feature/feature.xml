@@ -18,8 +18,8 @@
     
     <feature name="kura-camel" version="${project.version}" description="Apache Camel components for Kura">
         <feature dependency="true">camel</feature>
-        
-        <bundle>mvn:org.apache.camel/camel-osgi</bundle>
+        <feature dependency="true">camel-scr</feature>
+        <feature dependency="true">kura-core</feature>
         
         <bundle>mvn:org.eclipse.kura/org.eclipse.kura.camel/1.1.0-SNAPSHOT</bundle>
         <bundle>mvn:org.eclipse.kura/org.eclipse.kura.camel.cloud.factory/1.0.0-SNAPSHOT</bundle>
