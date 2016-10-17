@@ -62,7 +62,6 @@
         <module>org.eclipse.kura.linux.usb.x86_64.yocto</module>
         <module>org.eclipse.kura.linux.usb.x86.ubuntu</module>
         
-        <module>org.eclipse.kura.linux.usb</module>
         <module>org.eclipse.kura.linux.watchdog</module>
         <module>org.eclipse.kura.net.admin</module>
         <module>org.eclipse.kura.protocol.modbus</module>
