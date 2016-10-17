@@ -113,6 +113,8 @@
 
                         <feature>kura-runtime</feature>
                         <feature>kura-core</feature>
+                        <feature>kura-camel</feature>
+                        
                         <feature>kura-web</feature>
                     </bootFeatures>
                     <installedFeatures>
