@@ -13,7 +13,7 @@ RUN dnf -y install git java-1.8.0-openjdk-devel maven && \
     dnf remove -y git java-1.8.0-openjdk-devel maven && \
     dnf install -y jre-1.8.0-openjdk-headless && \
     dnf install -y /kura/karaf/deployment/targets/docker-emulator-fedora/target/*.rpm && \
-    rm -Rf /kura && dnf -y clean all
+    rm -Rf /kura /root/.m2 && dnf -y clean all
 
 EXPOSE 8181
 
