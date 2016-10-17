@@ -149,9 +149,8 @@
                             <framework>
                                 <feature>framework</feature>
                             </framework>
-                            <ignoreMissingConditions>true</ignoreMissingConditions>
                             <features>
-                                <feature>kura-linux</feature>
+                                <feature>kura-linux-armv6-hf</feature>
                             </features>
                         </configuration>
                     </execution>

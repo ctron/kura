@@ -8,6 +8,9 @@
 	<feature name="kura-runtime">
 		<bundle dependency="true">mvn:commons-io/commons-io/2.4</bundle>
 		<bundle dependency="true">mvn:org.osgi/org.osgi.service.repository/1.1.0</bundle>
+        
+        <feature dependency="true">scr</feature>
+        <feature dependency="true">eventadmin</feature>
 	</feature>
 
 </features>

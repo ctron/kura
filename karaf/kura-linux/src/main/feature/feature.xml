@@ -6,10 +6,20 @@
     xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xmlns/features/v1.4.0"
     >
     
-    <feature name="kura-linux">
+    <feature name="kura-linux" version="${project.version}" description="Eclipse Kura :: Linux" hidden="true">
         <feature dependency="true">kura-core</feature>
         
         <bundle dependency="true">mvn:commons-net/commons-net/3.5</bundle>
+    </feature>
+    
+    <feature name="kura-linux-armv6hf" version="${project.version}" description="Eclipse Kura :: Linux :: ARMv6 HF">
+        <feature>kura-linux-armv6hf-natives</feature>
+        <feature>kura-linux</feature>
+    </feature>
+    
+    <feature name="kura-linux-armv6hf-natives" version="${project.version}" hidden="true">
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.armv6hf/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/jdk.dio.armv6hf/1.0.6-SNAPSHOT</bundle>
     </feature>
     
 </features>

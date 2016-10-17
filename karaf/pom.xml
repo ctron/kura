@@ -23,7 +23,6 @@
 		<module>kura-emulator</module>
         
         <module>kura-linux</module>
-        <module>kura-linux-armv6hf</module>
 
 		<module>emulator-instance</module>
 	</modules>

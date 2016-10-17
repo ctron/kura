@@ -34,10 +34,6 @@
                 <configuration>
                     <aggregateFeatures>true</aggregateFeatures>
                     <bootFeatures combine.children="append">
-                        <feature>management</feature>
-                        <feature>diagnostic</feature>
-                        <feature>instance</feature>
-
                         <feature>kura-emulator</feature>
                     </bootFeatures>
                 </configuration>
