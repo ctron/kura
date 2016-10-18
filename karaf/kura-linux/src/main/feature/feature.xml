@@ -22,4 +22,14 @@
         <bundle>mvn:org.eclipse.kura/jdk.dio.armv6hf/1.0.6-SNAPSHOT</bundle>
     </feature>
     
+    <feature name="kura-linux-x86_64" version="${project.version}" description="Eclipse Kura :: Linux :: x86-64">
+        <feature>kura-linux-x86_64-natives</feature>
+        <feature>kura-linux</feature>
+    </feature>
+    
+    <feature name="kura-linux-x86_64-natives" version="${project.version}" hidden="true">
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.x86_64/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/jdk.dio.x86_64/1.0.6-SNAPSHOT</bundle>
+    </feature>
+    
 </features>

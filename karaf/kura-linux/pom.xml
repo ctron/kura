@@ -151,6 +151,7 @@
                             </framework>
                             <features>
                                 <feature>kura-linux-armv6-hf</feature>
+                                <feature>kura-linux-x86_64</feature>
                             </features>
                         </configuration>
                     </execution>
