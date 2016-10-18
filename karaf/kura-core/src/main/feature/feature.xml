@@ -10,6 +10,7 @@
     
     <feature name="kura-core">
         <feature prerequisite="true" dependency="true">scr</feature>
+        <feature prerequisite="true" dependency="true">shell-compat</feature>
         
         <feature dependency="true">eventadmin</feature>
         

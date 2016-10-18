@@ -122,7 +122,7 @@
                             </framework>
                             <features>
                                 <feature>kura-core</feature>
-                                <!-- TODO: validate kura-camel -->
+                                <feature>kura-camel</feature>
                             </features>
                         </configuration>
                     </execution>
