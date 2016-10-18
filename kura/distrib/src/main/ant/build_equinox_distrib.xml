@@ -10,7 +10,7 @@
     Contributors:
       Eurotech
       Red Hat Inc - minor fixes on startup scripts, fix issue #603
-          - fix issue #476
+         - fix issue #476
 
 -->
 <project name="build_equinox_distrib" default="dist-linux" basedir="../../../">

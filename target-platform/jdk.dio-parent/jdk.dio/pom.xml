@@ -34,6 +34,7 @@
 				<configuration>
 				    <instructions>
 				        <Export-Package>jdk.dio.*</Export-Package>
+	                    <Import-Package></Import-Package>
 				    </instructions>
 				</configuration>
 			</plugin>
