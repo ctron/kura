@@ -53,7 +53,9 @@ public class ModemDriver {
     private static int baseGpio;
 
     static {
-        if (TARGET_NAME.equals(KuraConstants.Mini_Gateway.getTargetName())) {
+        if (TARGET_NAME == null) {
+            s_logger.warn("'target.device' is not set. Unable to initialize modem drivers");
+        } else if (TARGET_NAME.equals(KuraConstants.Mini_Gateway.getTargetName())) {
             String gpioIndex = GPIO_INDEX_65;
             String gpioPath = BASE_GPIO_PATH + gpioIndex;
             String gpioDirectionPath = gpioPath + GPIO_DIRECTION_SUFFIX_PATH;
