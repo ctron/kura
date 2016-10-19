@@ -81,7 +81,7 @@
             <file>system.properties</file>
             <operation>put</operation>
             <key>target.device</key>
-            <value>generic.raspberry.pi2</value>
+            <value>generic.rhel7</value>
         </edit>
         
         <edit>

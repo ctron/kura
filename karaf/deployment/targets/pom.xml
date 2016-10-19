@@ -16,6 +16,7 @@
     <modules>
         <module>docker-emulator-fedora</module>
         <module>fedberry-24</module>
+        <module>rhel-7-x86_64</module>
     </modules>
 
     <dependencies>
@@ -273,8 +274,8 @@
                                 
                                 <!-- workaround for issue #321 -->
                                 <entry>
-                                    <name>/usr/lib/libudev.so.0</name>
-                                    <linkTo>/usr/lib/libudev.so.1</linkTo>
+                                    <name>/lib64/libudev.so.0</name>
+                                    <linkTo>/lib64/libudev.so.1</linkTo>
                                 </entry>
                                 
                             </entries>

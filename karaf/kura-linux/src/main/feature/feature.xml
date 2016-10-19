@@ -13,7 +13,7 @@
     </feature>
     
     <feature name="kura-linux-armv6hf" version="${project.version}" description="Eclipse Kura :: Linux :: ARMv6 HF">
-        <feature>kura-linux-armv6hf-natives</feature>
+        <feature dependency="true">kura-linux-armv6hf-natives</feature>
         <feature>kura-linux</feature>
     </feature>
     
@@ -23,7 +23,7 @@
     </feature>
     
     <feature name="kura-linux-x86_64" version="${project.version}" description="Eclipse Kura :: Linux :: x86-64">
-        <feature>kura-linux-x86_64-natives</feature>
+        <feature dependency="true">kura-linux-x86_64-natives</feature>
         <feature>kura-linux</feature>
     </feature>
     

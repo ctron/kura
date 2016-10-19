@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>fedberry-24</artifactId>
+    <artifactId>rhel-7-x86_64</artifactId>
     <packaging>karaf-assembly</packaging>
 
     <dependencies>
@@ -34,8 +34,18 @@
                 <configuration>
                     <aggregateFeatures>true</aggregateFeatures>
                     <bootFeatures combine.children="append">
-                    	<feature>kura-linux-armv6hf</feature>
+                    	<feature>kura-linux-x86_64</feature>
                     </bootFeatures>
+                </configuration>
+            </plugin>
+        
+            <plugin>
+                <groupId>de.dentrassi.maven</groupId>
+                <artifactId>rpm</artifactId>
+                <configuration>
+                    <requires combine.children="append">
+                        <require>usbutils</require> <!-- provides "lsusb" -->
+                    </requires>
                 </configuration>
             </plugin>
             
