@@ -177,6 +177,11 @@
 								    <version>${commons-exec.version}</version>
 								</artifactItem>
 								<artifactItem>
+								    <groupId>org.apache.commons</groupId>
+								    <artifactId>commons-exec</artifactId>
+								    <version>${commons-exec.version}</version>
+								</artifactItem>
+								<artifactItem>
 									<groupId>usb4java</groupId>
 									<artifactId>usb4java-javax</artifactId>
 									<version>${usb4java-javax.version}</version>

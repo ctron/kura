@@ -186,7 +186,7 @@ public class SupportedUsbModems {
     private static List<LsusbEntry> getLsusbInfo() throws Exception {
         final List<LsusbEntry> lsusbEntries = new ArrayList<LsusbEntry>();
 
-        for (final String line : execute("lsub")) {
+        for (final String line : execute("lsusb")) {
             LsusbEntry lsusbEntry = getLsusbEntry(line);
             if (lsusbEntry != null) {
                 lsusbEntries.add(lsusbEntry);
