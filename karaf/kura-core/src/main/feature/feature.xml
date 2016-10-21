@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features
+    xmlns="http://karaf.apache.org/xmlns/features/v1.4.0"
+    name="kura-core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.4.0 http://karaf.apache.org/xmlns/features/v1.4.0"
+    >
+    
+    <repository>mvn:org.apache.camel.karaf/apache-camel/2.18.0/xml/features</repository>
+    
+    <feature name="kura-core">
+        <feature prerequisite="true" dependency="true">scr</feature>
+        <feature prerequisite="true" dependency="true">shell-compat</feature>
+        
+        <feature dependency="true">eventadmin</feature>
+        
+        <feature dependency="true">kura-runtime</feature>
+    </feature>
+    
+    <feature name="kura-camel" version="${project.version}" description="Apache Camel components for Kura">
+        <feature dependency="true">camel</feature>
+        <feature dependency="true">camel-scr</feature>
+        <feature dependency="true">kura-core</feature>
+        
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.camel/1.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.camel.cloud.factory/1.0.0-SNAPSHOT</bundle>
+    </feature>
+</features>
