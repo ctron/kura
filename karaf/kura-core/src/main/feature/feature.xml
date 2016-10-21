@@ -9,6 +9,7 @@
     <repository>mvn:org.apache.camel.karaf/apache-camel/2.18.0/xml/features</repository>
     
     <feature name="kura-core">
+        <bundle dependency="true">mvn:org.osgi/org.osgi.service.wireadmin/1.0.1</bundle>
         <feature prerequisite="true" dependency="true">scr</feature>
         <feature prerequisite="true" dependency="true">shell-compat</feature>
         
