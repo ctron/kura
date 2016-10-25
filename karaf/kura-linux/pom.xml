@@ -106,7 +106,7 @@
         <dependency>
             <groupId>org.eclipse.kura</groupId>
             <artifactId>org.eclipse.kura.linux.usb</artifactId>
-            <version>[1.0,2.0)</version>
+            <version>1.0.8-SNAPSHOT</version>
         </dependency>
         
         <dependency>

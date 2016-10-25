@@ -18,7 +18,7 @@
     </feature>
     
     <feature name="kura-linux-armv6hf-natives" version="${project.version}" hidden="true">
-        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.armv6hf/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.armv6hf/1.0.8-SNAPSHOT</bundle>
         <bundle>mvn:org.eclipse.kura/jdk.dio.armv6hf/1.0.6-SNAPSHOT</bundle>
     </feature>
     
@@ -28,7 +28,7 @@
     </feature>
     
     <feature name="kura-linux-x86_64-natives" version="${project.version}" hidden="true">
-        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.x86_64/1.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.eclipse.kura/org.eclipse.kura.linux.usb.x86_64/1.0.8-SNAPSHOT</bundle>
         <bundle>mvn:org.eclipse.kura/jdk.dio.x86_64/1.0.6-SNAPSHOT</bundle>
     </feature>
     
