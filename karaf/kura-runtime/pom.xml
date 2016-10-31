@@ -18,11 +18,14 @@
 			<id>central</id>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-		<repository>
-			<id>kura_addons</id>
-			<name>Kura Addons Maven Repository</name>
-			<url>http://repository-ctron.rhcloud.com/maven/eclipse-kura-runtime</url>
-		</repository>
+        <repository>
+            <id>kura_addons</id>
+            <url>https://raw.github.com/eurotech/kura_addons/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
 		<repository>
 			<id>Eclipse Paho Repo</id>
 			<url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
