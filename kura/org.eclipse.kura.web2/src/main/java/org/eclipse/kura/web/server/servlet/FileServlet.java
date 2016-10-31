@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2016 Eurotech and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,8 +8,11 @@
  *
  * Contributors:
  *     Eurotech
+ *     Red Hat Inc - Bug fixing
  *******************************************************************************/
 package org.eclipse.kura.web.server.servlet;
+
+import static org.eclipse.kura.web.server.util.ServiceLocator.withService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -49,14 +52,15 @@ import org.eclipse.kura.core.configuration.XmlComponentConfigurations;
 import org.eclipse.kura.core.configuration.util.XmlUtil;
 import org.eclipse.kura.deployment.agent.DeploymentAgentService;
 import org.eclipse.kura.system.SystemService;
-import org.eclipse.kura.web.Console;
 import org.eclipse.kura.web.server.KuraRemoteServiceServlet;
 import org.eclipse.kura.web.server.util.ServiceLocator;
+import org.eclipse.kura.web.server.util.ServiceLocator.ServiceFunction;
 import org.eclipse.kura.web.shared.GwtKuraErrorCode;
 import org.eclipse.kura.web.shared.GwtKuraException;
 import org.eclipse.kura.web.shared.model.GwtXSRFToken;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
 import org.slf4j.Logger;
@@ -66,11 +70,11 @@ public class FileServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5016170117606322129L;
 
-    private static Logger s_logger = LoggerFactory.getLogger(FileServlet.class);
+    private static final Logger s_logger = LoggerFactory.getLogger(FileServlet.class);
 
     private static final int BUFFER = 1024;
     private static int tooBig = 0x6400000; // Max size of unzipped data, 100MB
-    private static int tooMany = 1024;     // Max number of files
+    private static int tooMany = 1024; // Max number of files
 
     private DiskFileItemFactory m_diskFileItemFactory;
     private FileCleaningTracker m_fileCleaningTracker;
@@ -160,8 +164,8 @@ public class FileServlet extends HttpServlet {
         }
     }
 
-    private void doGetIcon(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String queryString = req.getQueryString();
+    private void doGetIcon(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        final String queryString = req.getQueryString();
 
         if (queryString == null) {
             s_logger.error("Error parsing query string.");
@@ -169,7 +173,7 @@ public class FileServlet extends HttpServlet {
         }
 
         // Parse the query string
-        Map<String, String> pairs;
+        final Map<String, String> pairs;
         try {
             pairs = parseQueryString(queryString);
         } catch (UnsupportedEncodingException e) {
@@ -183,52 +187,61 @@ public class FileServlet extends HttpServlet {
             throw new ServletException("Error parsing query string.");
         }
 
-        String pid = pairs.get("pid");
-        if (pid != null && pid.length() > 0) {
-            BundleContext ctx = Console.getBundleContext();
-            Bundle[] bundles = ctx.getBundles();
-            ServiceLocator locator = ServiceLocator.getInstance();
-
-            // Iterate over bundles to find PID
-            for (Bundle b : bundles) {
-                MetaTypeService mts;
-                try {
-                    mts = locator.getService(MetaTypeService.class);
-                } catch (GwtKuraException e1) {
-                    s_logger.error("Error parsing query string.");
-                    throw new ServletException("Error parsing query string.");
-                }
-                MetaTypeInformation mti = mts.getMetaTypeInformation(b);
-
-                String[] pids = mti.getPids();
-                for (String p : pids) {
-                    if (p.equals(pid)) {
-                        try {
-                            InputStream is = mti.getObjectClassDefinition(pid, null).getIcon(32);
-                            if (is == null) {
-                                s_logger.error("Error reading icon file.");
-                                throw new ServletException("Error reading icon file.");
-                            }
-                            OutputStream os = resp.getOutputStream();
-                            byte[] buffer = new byte[1024];
-                            for (int length = 0; (length = is.read(buffer)) > 0;) {
-                                os.write(buffer, 0, length);
-                            }
-                            is.close();
-                            os.close();
-
-                        } catch (IOException e) {
-                            s_logger.error("Error reading icon file.");
-                            throw new IOException("Error reading icon file.");
-                        }
-                    }
-                }
-            }
-        } else {
+        final String pid = pairs.get("pid");
+        if (pid == null || pid.isEmpty()) {
             s_logger.error("Error parsing query string.");
             throw new ServletException("Error parsing query string.");
         }
 
+        final BundleContext ctx = FrameworkUtil.getBundle(FileServlet.class).getBundleContext();
+        final Bundle[] bundles = ctx.getBundles();
+
+        try {
+            withService(MetaTypeService.class, new ServiceFunction<MetaTypeService, Void, Exception>() {
+                @Override
+                public Void apply(MetaTypeService mts) throws Exception {
+
+                    // Iterate over bundles to find PID
+                    for (final Bundle b : bundles) {
+                        final MetaTypeInformation mti = mts.getMetaTypeInformation(b);
+                        if (mti == null)
+                            continue;
+
+                        final String[] pids = mti.getPids();
+                        for (final String p : pids) {
+                            if (p.equals(pid)) {
+                                try {
+                                    final InputStream is = mti.getObjectClassDefinition(pid, null).getIcon(32);
+                                    if (is == null) {
+                                        s_logger.error("Error reading icon file.");
+                                        throw new ServletException("Error reading icon file.");
+                                    }
+                                    final OutputStream os = resp.getOutputStream();
+                                    byte[] buffer = new byte[1024];
+                                    for (int length = 0; (length = is.read(buffer)) > 0;) {
+                                        os.write(buffer, 0, length);
+                                    }
+                                    is.close();
+                                    os.close();
+
+                                } catch (IOException e) {
+                                    s_logger.error("Error reading icon file.");
+                                    throw new IOException("Error reading icon file.", e);
+                                }
+                            }
+                        }
+                    }
+
+                    return null;
+                }
+            });
+        } catch (IOException e) {
+            throw e;
+        } catch (ServletException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Map<String, String> parseQueryString(String queryString) throws UnsupportedEncodingException {
@@ -237,8 +250,7 @@ public class FileServlet extends HttpServlet {
         String[] pairs = queryString.split("&");
         for (String p : pairs) {
             int index = p.indexOf("=");
-            qp.put(URLDecoder.decode(p.substring(0, index), "UTF-8"),
-                    URLDecoder.decode(p.substring(index + 1), "UTF-8"));
+            qp.put(URLDecoder.decode(p.substring(0, index), "UTF-8"), URLDecoder.decode(p.substring(index + 1), "UTF-8"));
         }
         return qp;
     }
@@ -285,8 +297,7 @@ public class FileServlet extends HttpServlet {
                 while (ze != null) {
                     byte[] buffer = new byte[BUFFER];
 
-                    String expectedFilePath = new StringBuilder(localFolder.getPath()).append(File.separator)
-                            .append(ze.getName()).toString();
+                    String expectedFilePath = new StringBuilder(localFolder.getPath()).append(File.separator).append(ze.getName()).toString();
                     String fileName = validateFileName(expectedFilePath, localFolder.getPath());
                     File newFile = new File(fileName);
                     if (newFile.isDirectory()) {
@@ -363,8 +374,7 @@ public class FileServlet extends HttpServlet {
         }
     }
 
-    private void doPostConfigurationSnapshot(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private void doPostConfigurationSnapshot(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         UploadRequest upload = new UploadRequest(this.m_diskFileItemFactory);
 
@@ -429,8 +439,7 @@ public class FileServlet extends HttpServlet {
         }
     }
 
-    private void doPostDeployUpload(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    private void doPostDeployUpload(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServiceLocator locator = ServiceLocator.getInstance();
         DeploymentAgentService deploymentAgentService;
         try {
@@ -659,8 +668,7 @@ public class FileServlet extends HttpServlet {
         try {
             SystemService systemService = locator.getService(SystemService.class);
             sizeThreshold = Integer
-                    .parseInt(systemService.getProperties().getProperty("file.upload.in.memory.size.threshold",
-                            String.valueOf(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD)));
+                    .parseInt(systemService.getProperties().getProperty("file.upload.in.memory.size.threshold", String.valueOf(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD)));
         } catch (GwtKuraException e) {
             s_logger.error("Error locating SystemService", e);
         }
