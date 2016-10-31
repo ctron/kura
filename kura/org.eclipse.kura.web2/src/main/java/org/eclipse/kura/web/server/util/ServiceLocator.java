@@ -46,8 +46,7 @@ public class ServiceLocator {
         return sr;
     }
 
-    public <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> serviceClass, String filter)
-            throws GwtKuraException {
+    public <T> Collection<ServiceReference<T>> getServiceReferences(Class<T> serviceClass, String filter) throws GwtKuraException {
         final BundleContext bundleContext = Console.getBundleContext();
         Collection<ServiceReference<T>> sr = null;
         if (bundleContext != null) {
@@ -73,9 +72,8 @@ public class ServiceLocator {
         return service;
     }
 
-    public interface ServiceFunction<T, R> {
-
-        public R apply(T service);
+    public interface ServiceFunction<T, R, E extends Throwable> {
+        public R apply(T service) throws E;
     }
 
     /**
@@ -91,16 +89,59 @@ public class ServiceLocator {
      *            the function to execute
      * @return the return value of the function
      */
-    public static <T, R> R withOptionalService(final Class<T> serviceClass, final ServiceFunction<T, R> function) {
+    public static <T, R, E extends Throwable> R withOptionalService(final Class<T> serviceClass, final ServiceFunction<T, R, E> function) throws E {
         final BundleContext ctx = FrameworkUtil.getBundle(ServiceLocator.class).getBundleContext();
         final ServiceReference<T> ref = ctx.getServiceReference(serviceClass);
         if (ref == null) {
             return function.apply(null);
         }
 
+        return withReference(ctx, ref, function);
+    }
+
+    /**
+     * Locate a service and execute the provided function
+     * <p>
+     * If a service reference for the provided class could not be found an exception will be thrown instead
+     * </p>
+     *
+     * @param serviceClass
+     *            the service to locate
+     * @param function
+     *            the function to execute
+     * @throws GwtKuraException
+     *             if no service instance for this class could be found
+     * @return the return value of the function
+     */
+    public static <T, R, E extends Throwable> R withService(final Class<T> serviceClass, final ServiceFunction<T, R, E> function) throws GwtKuraException, E {
+        final BundleContext ctx = FrameworkUtil.getBundle(ServiceLocator.class).getBundleContext();
+        final ServiceReference<T> ref = ctx.getServiceReference(serviceClass);
+
+        if (ref == null) {
+            throw GwtKuraException.internalError(String.format("No instance of %s found", serviceClass.getName()));
+        }
+
+        return withReference(ctx, ref, function);
+    }
+
+    /**
+     * Execute with a provided service reference
+     * 
+     * @param ctx
+     *            the bundle context to use
+     * @param ref
+     *            the service reference to use
+     * @param function
+     *            the function to execute
+     *
+     * @return the return value of the function
+     */
+    private static <T, R, E extends Throwable> R withReference(final BundleContext ctx, final ServiceReference<T> ref, final ServiceFunction<T, R, E> function) throws E {
         final T service = ctx.getService(ref);
         try {
             return function.apply(service);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             ctx.ungetService(ref);
         }

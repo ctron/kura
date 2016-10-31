@@ -306,7 +306,7 @@ public class GwtStatusServiceImpl extends OsgiRemoteServiceServlet implements Gw
     private List<GwtGroupedNVPair> getPositionStatus() {
         final List<GwtGroupedNVPair> pairs = new ArrayList<GwtGroupedNVPair>();
 
-        ServiceLocator.withOptionalService(PositionService.class, new ServiceFunction<PositionService, Void>() {
+        ServiceLocator.withOptionalService(PositionService.class, new ServiceFunction<PositionService, Void, RuntimeException>() {
 
             @Override
             public Void apply(PositionService positionService) {
