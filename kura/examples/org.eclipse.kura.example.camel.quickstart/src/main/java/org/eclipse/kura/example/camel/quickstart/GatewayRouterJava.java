@@ -120,6 +120,10 @@ public class GatewayRouterJava implements ConfigurableComponent {
 
                     @Override
                     public void consume(final CamelContext context, final CloudService service) {
+                    	/*
+                    	 * we do use "cloud" here to differentiate between the default
+                    	 * "kura-cloud" component and our own registration
+                    	 */
                         context.addComponent("cloud", new KuraCloudComponent(context, service));
                     }
                 });
