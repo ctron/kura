@@ -6,7 +6,7 @@ ENV JAVA_HOME=/usr/lib/jvm/jre-1.8.0
 
 RUN env
 COPY . /kura
-RUN find .
+RUN dnf -y install findutils && find .
 RUN dnf -y install git java-1.8.0-openjdk-devel maven && \
     cd /kura && ./build-all.sh -Pspeedup && \
     cd /kura/karaf && mvn clean install && \
