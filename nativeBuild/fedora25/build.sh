@@ -30,5 +30,5 @@ done
 
 JAVA_HOME=/armv7/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.91-7.b14.fc24.arm
 cd /build/kura/org.eclipse.kura.linux.usb/src/main/c/udev
-arm-linux-gnu-gcc -Wall --sysroot=/armv7 -fPIC -shared -Ludev LinuxUdev.c -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -o /output/fedora/armv7/libEurotechLinuxUdev.so
+arm-linux-gnu-gcc -Wall --sysroot=/armv7 -fPIC -shared -L/armv7/lib -L/armv7/usr/lib LinuxUdev.c -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -o /output/fedora/armv7/libEurotechLinuxUdev.so -ludev
 

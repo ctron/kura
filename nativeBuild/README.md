@@ -19,3 +19,10 @@ This will create a set of docker images and afterwards run the build scripts ins
 docker images.
 
 The result will be placed in the output folder `output`.
+
+## Native targets
+
+<dl>
+<dt>rhel7/x86_64</dt><dd>Plain RHEL7/CentOS7</dd>
+<dt>armv7hf</dt><dd>ARM v7 hard-float, `libudev.so.1`</dd>
+</dl>
