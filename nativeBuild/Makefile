@@ -32,3 +32,5 @@ update:
 	cp output/fedora25/armv7hf/libEurotechUdev.so  ../kura/org.eclipse.kura.linux.usb.x86.armv7hf/lib/linux/
 	cp output/rhel7/x86_64/libEurotechUdev.so      ../kura/org.eclipse.kura.linux.usb.x86_64.rhel7/lib/linux/
 	cp output/ubuntu/x86/libEurotechUdev.so        ../kura/org.eclipse.kura.linux.usb.x86.ubuntu/lib/linux/
+	cp output/rhel7/x86_64/libEurotechUdev.so      ../kura/org.eclipse.kura.linux.usb.x86_64/lib/linux/
+	cp output/ubuntu/x86/libEurotechUdev.so        ../kura/org.eclipse.kura.linux.usb.x86/lib/linux/
